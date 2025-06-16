@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Lisans Yönetimi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
+        .pricing-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+        }
+        .pricing-card.featured {
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        .license-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .status-active {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+        .status-expired {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+        .status-trial {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/generate">Test Oluştur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/analyze">Locator Analizi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/excel">Excel İşleme</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/execute">Test Çalıştır</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/license">Lisans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-key me-2"></i>Lisans Yönetimi
+            </h2>
+            
+            <!-- Current License Status -->
+            <div id="currentLicense" class="mb-4">
+                <h4><i class="fas fa-info-circle me-2"></i>Mevcut Lisans Durumu</h4>
+                <div id="licenseStatus" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trial Start Section -->
+            <div id="trialSection" class="mb-4" style="display: none;">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">
+                            <i class="fas fa-gift me-2"></i>Ücretsiz Deneme Başlat
+                        </h5>
+                        <p class="card-text">TestMate Studio'yu 7 gün boyunca ücretsiz deneyin!</p>
+                        <button class="btn btn-primary" onclick="startTrial()">
+                            <i class="fas fa-play me-2"></i>Deneme Başlat
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- License Verification -->
+            <div id="verificationSection" class="mb-4" style="display: none;">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-check-circle me-2"></i>Lisans Doğrulama
+                        </h5>
+                        <form id="licenseForm">
+                            <div class="mb-3">
+                                <label for="licenseKey" class="form-label">Lisans Anahtarı</label>
+                                <input type="text" class="form-control" id="licenseKey" 
+                                       placeholder="Lisans anahtarınızı girin..." required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check me-2"></i>Doğrula
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pricing Plans -->
+            <div id="pricingSection" class="mb-4">
+                <h4 class="text-center mb-4">
+                    <i class="fas fa-tags me-2"></i>Fiyatlandırma Planları
+                </h4>
+                <div class="row" id="pricingPlans">
+                    <!-- Pricing plans will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Form Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-envelope me-2"></i>İletişim Formu
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="contactFormAlert" class="alert" style="display: none;">
+                        <span id="contactFormMessage"></span>
+                    </div>
+                    
+                    <form id="contactForm">
+                        <input type="hidden" id="selectedPlan" name="selectedPlan">
+                        
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label">Ad Soyad *</label>
+                            <input type="text" class="form-control" id="contactName" name="name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label">E-posta Adresi *</label>
+                            <input type="email" class="form-control" id="contactEmail" name="email" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contactPhone" class="form-label">Telefon Numarası *</label>
+                            <input type="tel" class="form-control" id="contactPhone" name="phone" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contactCompany" class="form-label">Şirket (Opsiyonel)</label>
+                            <input type="text" class="form-control" id="contactCompany" name="company">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="contactMessage" class="form-label">Ek Notlar (Opsiyonel)</label>
+                            <textarea class="form-control" id="contactMessage" name="message" rows="3" 
+                                      placeholder="Ek bilgiler veya sorularınız..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="submitContactForm()">
+                        <i class="fas fa-paper-plane me-2"></i>Gönder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load license status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLicenseStatus();
+            loadPricingPlans();
+        });
+        
+        async function loadLicenseStatus() {
+            try {
+                const response = await fetch('/api/license/status');
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('licenseStatus');
+                
+                if (data.has_license) {
+                    statusDiv.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Lisans Bilgileri</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><strong>Lisans Türü:</strong> ${data.license_type}</p>
+                                        <p><strong>E-posta:</strong> ${data.email}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Başlangıç:</strong> ${data.start_date}</p>
+                                        <p><strong>Bitiş:</strong> ${data.end_date}</p>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <span class="license-status status-${data.status.toLowerCase()}">
+                                        ${data.status}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('trialSection').style.display = 'none';
+                    document.getElementById('verificationSection').style.display = 'none';
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Henüz bir lisansınız bulunmuyor. Deneme başlatabilir veya lisans satın alabilirsiniz.
+                        </div>
+                    `;
+                    
+                    document.getElementById('trialSection').style.display = 'block';
+                    document.getElementById('verificationSection').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('License status error:', error);
+                document.getElementById('licenseStatus').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Lisans durumu yüklenirken hata oluştu.
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadPricingPlans() {
+            try {
+                const response = await fetch('/api/license/pricing');
+                const data = await response.json();
+                
+                const plansContainer = document.getElementById('pricingPlans');
+                plansContainer.innerHTML = '';
+                
+                data.plans.forEach((plan, index) => {
+                    const isFeatured = plan.name.toLowerCase() === 'professional';
+                    const planCard = document.createElement('div');
+                    planCard.className = `col-md-4 ${isFeatured ? 'featured' : ''}`;
+                    planCard.innerHTML = `
+                        <div class="pricing-card ${isFeatured ? 'featured' : ''}">
+                            <div class="text-center">
+                                <h4>${plan.name}</h4>
+                                <h2 class="text-primary">$${plan.price}</h2>
+                                <p class="text-muted">/ay</p>
+                            </div>
+                            <ul class="list-unstyled">
+                                ${plan.features.map(feature => `
+                                    <li><i class="fas fa-check text-success me-2"></i>${feature}</li>
+                                `).join('')}
+                            </ul>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-primary" onclick="selectPlan('${plan.name}', ${plan.price})">
+                                    <i class="fas fa-shopping-cart me-2"></i>Seç
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    plansContainer.appendChild(planCard);
+                });
+            } catch (error) {
+                console.error('Pricing plans error:', error);
+            }
+        }
+        
+        async function startTrial() {
+            const email = prompt('E-posta adresinizi girin:');
+            
+            // Kullanıcı iptal ettiyse veya boş email girdiyse
+            if (!email || email.trim() === '') {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/license/trial', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email.trim()
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Deneme başarıyla başlatıldı! 7 gün boyunca tüm özellikleri kullanabilirsiniz.');
+                    loadLicenseStatus();
+                } else {
+                    alert('Hata: ' + (data.detail || data.error || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Trial error:', error);
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        }
+        
+        document.getElementById('licenseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const licenseKey = document.getElementById('licenseKey').value;
+            
+            try {
+                const response = await fetch('/api/license/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        license_key: licenseKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lisans başarıyla doğrulandı!');
+                    loadLicenseStatus();
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        });
+        
+        function selectPlan(planName, planPrice) {
+            // Seçilen planı modal'a set et
+            document.getElementById('selectedPlan').value = planName;
+            
+            // Modal'ı aç
+            const modal = new bootstrap.Modal(document.getElementById('contactModal'));
+            modal.show();
+        }
+        
+        async function submitContactForm() {
+            const form = document.getElementById('contactForm');
+            const formData = new FormData(form);
+            
+            // Form validasyonu
+            if (!formData.get('name') || !formData.get('email') || !formData.get('phone')) {
+                showContactAlert('Lütfen zorunlu alanları doldurun.', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/contact/plan-request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        plan_name: formData.get('selectedPlan'),
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        phone: formData.get('phone'),
+                        company: formData.get('company') || '',
+                        message: formData.get('message') || ''
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showContactAlert('Talebiniz başarıyla alındı! En kısa sürede size dönüş yapılacaktır.', 'success');
+                    form.reset();
+                    
+                    // 2 saniye sonra modal'ı kapat
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                        modal.hide();
+                    }, 2000);
+                } else {
+                    showContactAlert('Hata: ' + data.detail, 'danger');
+                }
+            } catch (error) {
+                showContactAlert('Bir hata oluştu: ' + error.message, 'danger');
+            }
+        }
+        
+        function showContactAlert(message, type) {
+            const alertDiv = document.getElementById('contactFormAlert');
+            const messageSpan = document.getElementById('contactFormMessage');
+            
+            alertDiv.className = `alert alert-${type}`;
+            messageSpan.textContent = message;
+            alertDiv.style.display = 'block';
+            
+            // 5 saniye sonra alert'i gizle
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

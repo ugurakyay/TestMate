@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Test Oluştur</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
+        .result-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-left: 4px solid #667eea;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/generate">Test Oluştur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/analyze">Locator Analizi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/excel">Excel İşleme</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/execute">Test Çalıştır</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/license">Lisans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-magic me-2"></i>AI Test Oluşturucu
+            </h2>
+            
+            <form id="testForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="testType" class="form-label">Test Türü</label>
+                            <select class="form-select" id="testType" required>
+                                <option value="">Seçiniz...</option>
+                                <option value="web">Web Testi</option>
+                                <option value="mobile">Mobil Testi</option>
+                                <option value="api">API Testi</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="framework" class="form-label">Framework</label>
+                            <select class="form-select" id="framework" required>
+                                <option value="">Seçiniz...</option>
+                                <option value="selenium">Selenium WebDriver</option>
+                                <option value="appium">Appium</option>
+                                <option value="requests">Python Requests</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="scenario" class="form-label">Test Senaryosu</label>
+                    <textarea class="form-control" id="scenario" rows="4" 
+                              placeholder="Test senaryonuzu detaylı bir şekilde açıklayın. Örnek: Kullanıcı login sayfasına gider, email ve şifre girer, login butonuna tıklar ve dashboard'a yönlendirilir." required></textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="url" class="form-label">Test URL (Opsiyonel)</label>
+                    <input type="url" class="form-control" id="url" 
+                           placeholder="https://example.com">
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-magic me-2"></i>Test Oluştur
+                    </button>
+                </div>
+            </form>
+            
+            <div id="result" class="mt-4" style="display: none;">
+                <h4><i class="fas fa-code me-2"></i>Oluşturulan Test Kodu</h4>
+                <div class="result-box">
+                    <pre id="testCode" class="bg-dark text-light p-3 rounded"></pre>
+                </div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-success me-2" onclick="downloadTest()">
+                        <i class="fas fa-download me-2"></i>İndir
+                    </button>
+                    <button class="btn btn-info" onclick="copyToClipboard()">
+                        <i class="fas fa-copy me-2"></i>Kopyala
+                    </button>
+                </div>
+            </div>
+            
+            <div id="loading" class="text-center mt-4" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Yükleniyor...</span>
+                </div>
+                <p class="mt-2">AI test kodunuzu oluşturuyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('testForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                feature_description: document.getElementById('scenario').value,
+                test_type: document.getElementById('testType').value,
+                framework: document.getElementById('framework').value,
+                additional_context: document.getElementById('url').value
+            };
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/generate-test', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    if (data.test_cases && data.test_cases.length > 0) {
+                        document.getElementById('testCode').textContent = data.test_cases[0].code;
+                        document.getElementById('result').style.display = 'block';
+                    } else {
+                        document.getElementById('testCode').textContent = 'Test kodu oluşturulamadı.';
+                        document.getElementById('result').style.display = 'block';
+                    }
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        function copyToClipboard() {
+            const code = document.getElementById('testCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Kod panoya kopyalandı!');
+            });
+        }
+        
+        function downloadTest() {
+            const code = document.getElementById('testCode').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'generated_test.py';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html> 

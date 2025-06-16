@@ -1,0 +1,53 @@
+{
+  "licenses": {},
+  "users": {
+    "test@example.com": {
+      "email": "test@example.com",
+      "license_type": "trial",
+      "status": "active",
+      "created_date": "2025-06-16T14:25:55.675561",
+      "expiry_date": "2025-06-23T14:25:55.675578",
+      "usage": {
+        "test_generation": 0,
+        "locator_analysis": 0,
+        "excel_processing": 0
+      }
+    },
+    "ugurakyay@gmail.com": {
+      "email": "ugurakyay@gmail.com",
+      "license_type": "trial",
+      "status": "active",
+      "created_date": "2025-06-16T14:27:04.788671",
+      "expiry_date": "2025-06-23T14:27:04.788707",
+      "usage": {
+        "test_generation": 0,
+        "locator_analysis": 0,
+        "excel_processing": 0
+      }
+    },
+    "newuser@example.com": {
+      "email": "newuser@example.com",
+      "license_type": "professional",
+      "status": "active",
+      "created_date": "2025-06-16T15:28:08.630863",
+      "expiry_date": "2025-07-16T15:57:30.283589",
+      "usage": {
+        "test_generation": 0,
+        "locator_analysis": 0,
+        "excel_processing": 0
+      },
+      "updated_date": "2025-06-16T15:57:30.283608"
+    }
+  },
+  "statistics": {
+    "total_users": 3,
+    "active_licenses": 3,
+    "trial_users": 2,
+    "total_revenue": 0
+  },
+  "created_at": "2025-06-16T13:58:17.018724",
+  "dev_usage": {
+    "test_generation": 11,
+    "project_generation": 1
+  }
+}

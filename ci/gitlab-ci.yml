@@ -1,0 +1,406 @@
+# GitLab CI/CD Pipeline for AI Test Tool
+# This pipeline runs automated tests for web, mobile, and API applications
+
+stages:
+  - setup
+  - test
+  - analyze
+  - report
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip-cache"
+  PYTHON_VERSION: "3.9"
+  CHROME_DRIVER_VERSION: "latest"
+  FIREFOX_DRIVER_VERSION: "latest"
+
+# Cache dependencies between jobs
+cache:
+  paths:
+    - .pip-cache/
+    - node_modules/
+    - screenshots/
+
+# Setup stage - Install dependencies
+setup:
+  stage: setup
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - python -V
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    - pip install pytest-html pytest-json-report
+  artifacts:
+    paths:
+      - .pip-cache/
+    expire_in: 1 hour
+
+# Web Tests
+web_tests:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  services:
+    - selenium/standalone-chrome:${CHROME_DRIVER_VERSION}
+  variables:
+    SELENIUM_DRIVER_URL: "http://selenium__standalone-chrome:4444/wd/hub"
+  before_script:
+    - pip install -r requirements.txt
+    - mkdir -p screenshots
+  script:
+    - python -m pytest tests/web/ -v --html=reports/web_test_report.html --json-report --json-report-file=reports/web_test_results.json
+  artifacts:
+    paths:
+      - reports/web_test_report.html
+      - reports/web_test_results.json
+      - screenshots/
+    expire_in: 1 week
+    reports:
+      junit: reports/web_test_results.xml
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+  allow_failure: false
+
+# Mobile Tests (Android)
+mobile_tests_android:
+  stage: test
+  image: openjdk:11
+  services:
+    - appium/appium:latest
+  variables:
+    APPIUM_SERVER: "http://appium__appium:4723/wd/hub"
+  before_script:
+    - apt-get update && apt-get install -y python3 python3-pip
+    - pip3 install -r requirements.txt
+    - mkdir -p screenshots
+  script:
+    - python3 -m pytest tests/mobile/ -v --html=reports/mobile_android_test_report.html --json-report --json-report-file=reports/mobile_android_test_results.json
+  artifacts:
+    paths:
+      - reports/mobile_android_test_report.html
+      - reports/mobile_android_test_results.json
+      - screenshots/
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Mobile Tests (iOS)
+mobile_tests_ios:
+  stage: test
+  image: openjdk:11
+  services:
+    - appium/appium:latest
+  variables:
+    APPIUM_SERVER: "http://appium__appium:4723/wd/hub"
+  before_script:
+    - apt-get update && apt-get install -y python3 python3-pip
+    - pip3 install -r requirements.txt
+    - mkdir -p screenshots
+  script:
+    - python3 -m pytest tests/mobile/ -v --html=reports/mobile_ios_test_report.html --json-report --json-report-file=reports/mobile_ios_test_results.json
+  artifacts:
+    paths:
+      - reports/mobile_ios_test_report.html
+      - reports/mobile_ios_test_results.json
+      - screenshots/
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# API Tests
+api_tests:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+    - mkdir -p reports
+  script:
+    - python -m pytest tests/api/ -v --html=reports/api_test_report.html --json-report --json-report-file=reports/api_test_results.json
+  artifacts:
+    paths:
+      - reports/api_test_report.html
+      - reports/api_test_results.json
+    expire_in: 1 week
+    reports:
+      junit: reports/api_test_results.xml
+  allow_failure: false
+
+# Performance Tests
+performance_tests:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+    - pip install locust
+    - mkdir -p reports
+  script:
+    - python -m pytest tests/performance/ -v --html=reports/performance_test_report.html --json-report --json-report-file=reports/performance_test_results.json
+  artifacts:
+    paths:
+      - reports/performance_test_report.html
+      - reports/performance_test_results.json
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Security Tests
+security_tests:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+    - pip install bandit safety
+    - mkdir -p reports
+  script:
+    - bandit -r . -f json -o reports/security_scan.json
+    - safety check --json --output reports/dependency_scan.json
+    - python -m pytest tests/security/ -v --html=reports/security_test_report.html --json-report --json-report-file=reports/security_test_results.json
+  artifacts:
+    paths:
+      - reports/security_scan.json
+      - reports/dependency_scan.json
+      - reports/security_test_report.html
+      - reports/security_test_results.json
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Test Analysis
+test_analysis:
+  stage: analyze
+  image: python:${PYTHON_VERSION}
+  dependencies:
+    - web_tests
+    - mobile_tests_android
+    - mobile_tests_ios
+    - api_tests
+    - performance_tests
+    - security_tests
+  before_script:
+    - pip install -r requirements.txt
+    - mkdir -p reports
+  script:
+    - |
+      python -c "
+      from test_runner.result_parser import ResultParser
+      import json
+      import glob
+      
+      # Combine all test results
+      all_results = []
+      for result_file in glob.glob('reports/*_test_results.json'):
+          with open(result_file, 'r') as f:
+              results = json.load(f)
+              all_results.extend(results)
+      
+      # Save combined results
+      with open('reports/combined_test_results.json', 'w') as f:
+          json.dump(all_results, f, indent=2)
+      
+      # Generate analysis
+      parser = ResultParser()
+      parser.results = all_results
+      analysis = parser.analyze_results()
+      
+      # Save analysis report
+      with open('reports/test_analysis_report.txt', 'w') as f:
+          f.write(parser.generate_summary_report())
+      
+      # Export to Excel
+      parser.export_to_excel('reports/test_results_analysis.xlsx')
+      "
+  artifacts:
+    paths:
+      - reports/combined_test_results.json
+      - reports/test_analysis_report.txt
+      - reports/test_results_analysis.xlsx
+    expire_in: 1 month
+  allow_failure: false
+
+# Generate Test Reports
+generate_reports:
+  stage: report
+  image: python:${PYTHON_VERSION}
+  dependencies:
+    - test_analysis
+  before_script:
+    - pip install -r requirements.txt
+    - mkdir -p reports
+  script:
+    - |
+      python -c "
+      from test_runner.result_parser import ResultParser
+      import json
+      
+      # Load combined results
+      with open('reports/combined_test_results.json', 'r') as f:
+          results = json.load(f)
+      
+      # Generate comprehensive report
+      parser = ResultParser()
+      parser.results = results
+      analysis = parser.analyze_results()
+      
+      # Generate HTML report
+      html_report = parser.generate_report('html')
+      with open('reports/comprehensive_test_report.html', 'w') as f:
+          f.write(html_report)
+      
+      # Generate comparison report if previous results exist
+      try:
+          with open('reports/previous_test_results.json', 'r') as f:
+              comparison_report = parser.generate_comparison_report('reports/previous_test_results.json')
+              with open('reports/comparison_report.txt', 'w') as f:
+                  f.write(comparison_report)
+      except FileNotFoundError:
+          print('No previous results found for comparison')
+      
+      # Save current results as previous for next run
+      import shutil
+      shutil.copy('reports/combined_test_results.json', 'reports/previous_test_results.json')
+      "
+  artifacts:
+    paths:
+      - reports/comprehensive_test_report.html
+      - reports/comparison_report.txt
+      - reports/previous_test_results.json
+    expire_in: 1 month
+  allow_failure: false
+
+# Deploy Test Results to Dashboard
+deploy_results:
+  stage: deploy
+  image: python:${PYTHON_VERSION}
+  dependencies:
+    - generate_reports
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - |
+      # Deploy results to test dashboard (example)
+      echo "Deploying test results to dashboard..."
+      
+      # Upload reports to artifact repository
+      python -c "
+      import os
+      import requests
+      
+      # Example: Upload to test dashboard
+      dashboard_url = os.environ.get('TEST_DASHBOARD_URL', '')
+      if dashboard_url:
+          files = {
+              'report': open('reports/comprehensive_test_report.html', 'rb'),
+              'analysis': open('reports/test_results_analysis.xlsx', 'rb')
+          }
+          response = requests.post(dashboard_url, files=files)
+          print(f'Upload status: {response.status_code}')
+      "
+  artifacts:
+    paths:
+      - reports/
+    expire_in: 1 month
+  allow_failure: true
+  only:
+    - main
+    - develop
+
+# Code Quality Checks
+code_quality:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+    - pip install flake8 black isort mypy
+  script:
+    - flake8 . --max-line-length=120 --exclude=venv,__pycache__,.git
+    - black --check --diff .
+    - isort --check-only --diff .
+    - mypy ai_engine/ test_runner/ --ignore-missing-imports
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Dependency Security Scan
+dependency_scan:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install safety
+  script:
+    - safety check --json --output dependency_scan.json
+  artifacts:
+    paths:
+      - dependency_scan.json
+    expire_in: 1 week
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Test Coverage
+test_coverage:
+  stage: test
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+    - pip install coverage pytest-cov
+  script:
+    - coverage run -m pytest tests/ --cov=ai_engine --cov=test_runner --cov-report=html --cov-report=xml
+  artifacts:
+    paths:
+      - htmlcov/
+      - coverage.xml
+    expire_in: 1 week
+  coverage: '/TOTAL.*\s+(\d+%)$/'
+  allow_failure: true
+  only:
+    - merge_requests
+    - develop
+    - main
+
+# Environment-specific configurations
+.deploy_template: &deploy_template
+  stage: deploy
+  image: python:${PYTHON_VERSION}
+  before_script:
+    - pip install -r requirements.txt
+  script:
+    - echo "Deploying to $DEPLOY_ENVIRONMENT"
+    - python app.py
+  only:
+    - main
+
+# Production deployment
+deploy_production:
+  <<: *deploy_template
+  variables:
+    DEPLOY_ENVIRONMENT: "production"
+  environment:
+    name: production
+    url: https://ai-test-tool.example.com
+  when: manual
+
+# Staging deployment
+deploy_staging:
+  <<: *deploy_template
+  variables:
+    DEPLOY_ENVIRONMENT: "staging"
+  environment:
+    name: staging
+    url: https://staging-ai-test-tool.example.com
+  when: manual
+  only:
+    - develop 

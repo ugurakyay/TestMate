@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+            min-height: calc(100vh - 76px);
+            padding: 20px 0;
+        }
+        
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 12px 20px;
+            border-radius: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: #3498db;
+            color: #fff;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .user-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cogs me-2"></i>
+                TestMate Studio Admin
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home me-1"></i>
+                    Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2">
+                <div class="sidebar">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            Dashboard
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('users')">
+                            <i class="fas fa-users me-2"></i>
+                            Kullanıcılar
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('reports')">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Raporlar
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('contact-requests')">
+                            <i class="fas fa-envelope me-2"></i>
+                            İletişim Talepleri
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('settings')">
+                            <i class="fas fa-cog me-2"></i>
+                            Ayarlar
+                        </a>
+                        <hr class="text-white">
+                        <a class="nav-link text-danger" href="/admin/logout">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            Çıkış Yap
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard" class="section">
+                        <h2 class="mb-4">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </h2>
+                        
+                        <div class="row" id="statsCards">
+                            <!-- Stats will be loaded here -->
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Son Aktiviteler</h5>
+                                        <div id="recentActivities">
+                                            <!-- Activities will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Sistem Durumu</h5>
+                                        <div id="systemStatus">
+                                            <!-- System status will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="users" class="section" style="display: none;">
+                        <h2 class="mb-4">
+                            <i class="fas fa-users me-2"></i>Kullanıcı ve Lisans Yönetimi
+                        </h2>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <button class="btn btn-primary" onclick="showCreateLicenseForm()">
+                                    <i class="fas fa-plus me-2"></i>Yeni Lisans Oluştur
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="userSearch" placeholder="Kullanıcı ara...">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="performSearch()">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Create License Form -->
+                        <div id="createLicenseForm" class="card mb-4" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title">Yeni Lisans Oluştur</h5>
+                                <form id="licenseForm">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="license-email" class="form-label">E-posta</label>
+                                                <input type="email" class="form-control" id="license-email" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="license-type" class="form-label">Lisans Türü</label>
+                                                <select class="form-select" id="license-type" required>
+                                                    <option value="basic">Basic</option>
+                                                    <option value="professional">Professional</option>
+                                                    <option value="enterprise">Enterprise</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label for="license-duration" class="form-label">Süre (Gün)</label>
+                                                <input type="number" class="form-control" id="license-duration" value="30" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus me-2"></i>Lisans Oluştur
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div id="usersList">
+                            <!-- Users will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Reports Section -->
+                    <div id="reports" class="section" style="display: none;">
+                        <h2 class="mb-4">
+                            <i class="fas fa-chart-bar me-2"></i>Raporlar
+                        </h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Kullanım İstatistikleri</h5>
+                                        <div id="usageStats">
+                                            <!-- Usage stats will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gelir Raporu</h5>
+                                        <div id="revenueReport">
+                                            <!-- Revenue report will be loaded here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings" class="section" style="display: none;">
+                        <h2 class="mb-4">
+                            <i class="fas fa-cog me-2"></i>Sistem Ayarları
+                        </h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Genel Ayarlar</h5>
+                                        <form id="generalSettings">
+                                            <div class="mb-3">
+                                                <label for="siteName" class="form-label">Site Adı</label>
+                                                <input type="text" class="form-control" id="siteName" value="TestMate Studio">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="maxUsers" class="form-label">Maksimum Kullanıcı</label>
+                                                <input type="number" class="form-control" id="maxUsers" value="1000">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">E-posta Ayarları</h5>
+                                        <form id="emailSettings">
+                                            <div class="mb-3">
+                                                <label for="smtpHost" class="form-label">SMTP Host</label>
+                                                <input type="text" class="form-control" id="smtpHost">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="smtpPort" class="form-label">SMTP Port</label>
+                                                <input type="number" class="form-control" id="smtpPort" value="587">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Kaydet</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İletişim Talepleri Section -->
+                    <div id="contact-requests" class="section" style="display: none;">
+                        <h2 class="mb-4">
+                            <i class="fas fa-envelope me-2"></i>İletişim Talepleri
+                        </h2>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="row w-100">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Toplam Talep</h5>
+                                            <h3 id="total-requests">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Yeni Talepler</h5>
+                                            <h3 id="new-requests">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">İşlenen</h5>
+                                            <h3 id="processed-requests">0</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Plan İstatistikleri</h5>
+                                            <div id="plan-stats"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4>Talep Listesi</h4>
+                            <button class="btn btn-primary" onclick="refreshContactRequests()">
+                                <i class="fas fa-sync-alt me-1"></i>Yenile
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Plan</th>
+                                        <th>Ad</th>
+                                        <th>Email</th>
+                                        <th>Telefon</th>
+                                        <th>Şirket</th>
+                                        <th>Durum</th>
+                                        <th>Tarih</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contact-requests-table">
+                                    <!-- JavaScript ile doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- License View Modal -->
+    <div class="modal fade" id="licenseModal" tabindex="-1" aria-labelledby="licenseModalLabel" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="licenseModalLabel">
+                        <i class="fas fa-key me-2"></i>Lisans Detayları
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-user me-2"></i>Kullanıcı Bilgileri</h6>
+                            <p><strong>E-posta:</strong> <span id="modal-email"></span></p>
+                            <p><strong>Lisans Türü:</strong> <span id="modal-license-type"></span></p>
+                            <p><strong>Süre:</strong> <span id="modal-duration"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-key me-2"></i>Lisans Anahtarı</h6>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="modal-license-key" readonly>
+                                <button class="btn btn-outline-secondary" type="button" onclick="copyLicenseKey()">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6><i class="fas fa-file-text me-2"></i>Lisans Metni</h6>
+                            <div class="border p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
+                                <pre id="modal-license-text" class="mb-0"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Kapat
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="downloadLicense()">
+                        <i class="fas fa-download me-2"></i>İndir
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="emailLicense()">
+                        <i class="fas fa-envelope me-2"></i>E-posta Gönder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            loadUsers();
+            
+            // Add search functionality
+            const userSearchInput = document.getElementById('userSearch');
+            if (userSearchInput) {
+                userSearchInput.addEventListener('input', function() {
+                    searchUsers(this.value);
+                });
+                
+                // Add Enter key support
+                userSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+        });
+
+        // Global variable to store all users for search
+        let allUsers = [];
+
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                const data = await response.json();
+                
+                console.log('Users data from API:', data.users); // Debug log
+                
+                // Store all users globally for search
+                allUsers = data.users;
+                
+                displayUsers(allUsers);
+            } catch (error) {
+                console.error('Users load error:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const usersContainer = document.getElementById('usersList');
+            usersContainer.innerHTML = '';
+            
+            // Add results counter
+            const searchInput = document.getElementById('userSearch');
+            const searchTerm = searchInput ? searchInput.value.trim() : '';
+            
+            if (searchTerm) {
+                const resultsHeader = document.createElement('div');
+                resultsHeader.className = 'mb-3';
+                resultsHeader.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-search me-2"></i>
+                        "${searchTerm}" için ${users.length} sonuç bulundu
+                    </div>
+                `;
+                usersContainer.appendChild(resultsHeader);
+            }
+            
+            if (users.length === 0) {
+                usersContainer.innerHTML = '<div class="alert alert-info">Kullanıcı bulunamadı.</div>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                userCard.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1">
+                            <h6>${user.email}</h6>
+                            <small class="text-muted">Lisans: ${user.license_type} | Süre: ${user.duration} gün</small>
+                            <br>
+                            <small class="text-muted">Lisans Anahtarı: ${user.license_key || 'Yok'}</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-${user.status === 'active' ? 'success' : 'warning'}">${user.status}</span>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewLicense('${user.email}', '${user.license_key || ''}', '${user.license_type}', ${user.duration})" title="Lisansı Görüntüle">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" onclick="resendLicense('${user.email}')" title="Lisansı Yeniden Gönder">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-warning" onclick="regenerateLicense('${user.email}')" title="Lisansı Yeniden Oluştur">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                usersContainer.appendChild(userCard);
+            });
+        }
+
+        function searchUsers(searchTerm) {
+            if (!searchTerm || searchTerm.trim() === '') {
+                // If search is empty, show all users
+                displayUsers(allUsers);
+                return;
+            }
+            
+            const filteredUsers = allUsers.filter(user => 
+                user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.license_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.status.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            displayUsers(filteredUsers);
+        }
+
+        function performSearch() {
+            const searchInput = document.getElementById('userSearch');
+            searchUsers(searchInput.value);
+        }
+
+        function clearSearch() {
+            const searchInput = document.getElementById('userSearch');
+            searchInput.value = '';
+            displayUsers(allUsers);
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionName);
+            if (selectedSection) {
+                selectedSection.style.display = 'block';
+            }
+            
+            // Add active class to clicked nav link
+            event.target.classList.add('active');
+            
+            // Load section-specific data
+            switch(sectionName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+                case 'contact-requests':
+                    loadContactRequests();
+                    break;
+                case 'settings':
+                    console.log('Loading settings...');
+                    break;
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/admin/statistics');
+                const data = await response.json();
+                
+                const statsContainer = document.getElementById('statsCards');
+                statsContainer.innerHTML = `
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h3 class="text-primary">${data.total_users}</h3>
+                            <p class="text-muted">Toplam Kullanıcı</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h3 class="text-success">${data.active_licenses}</h3>
+                            <p class="text-muted">Aktif Lisans</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h3 class="text-warning">${data.trial_users}</h3>
+                            <p class="text-muted">Deneme Kullanıcı</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <h3 class="text-info">${data.total_revenue}</h3>
+                            <p class="text-muted">Toplam Gelir</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Dashboard load error:', error);
+            }
+        }
+
+        async function loadReports() {
+            // Implementation for loading reports
+            console.log('Loading reports...');
+        }
+
+        async function loadSettings() {
+            // Implementation for loading settings
+            console.log('Loading settings...');
+        }
+
+        // Load contact requests
+        async function loadContactRequests() {
+            try {
+                const response = await fetch('/api/admin/contact-requests');
+                const data = await response.json();
+                
+                const tableBody = document.getElementById('contact-requests-table');
+                tableBody.innerHTML = '';
+                
+                data.requests.forEach(request => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${request.id}</td>
+                        <td><span class="badge bg-primary">${request.plan_name}</span></td>
+                        <td>${request.name}</td>
+                        <td>${request.email}</td>
+                        <td>${request.phone}</td>
+                        <td>${request.company || '-'}</td>
+                        <td>
+                            <span class="badge ${request.status === 'new' ? 'bg-warning' : 'bg-success'}">
+                                ${request.status === 'new' ? 'Yeni' : 'İşlendi'}
+                            </span>
+                        </td>
+                        <td>${new Date(request.created_date).toLocaleDateString('tr-TR')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="markAsProcessed(${request.id})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-info" onclick="viewRequestDetails(${request.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // Load statistics
+                loadContactStatistics();
+                
+            } catch (error) {
+                console.error('Error loading contact requests:', error);
+            }
+        }
+        
+        // Load contact statistics
+        async function loadContactStatistics() {
+            try {
+                const response = await fetch('/api/admin/contact-statistics');
+                const stats = await response.json();
+                
+                document.getElementById('total-requests').textContent = stats.total_requests;
+                document.getElementById('new-requests').textContent = stats.new_requests;
+                document.getElementById('processed-requests').textContent = stats.processed_requests;
+                
+                // Plan statistics
+                const planStatsDiv = document.getElementById('plan-stats');
+                planStatsDiv.innerHTML = '';
+                
+                Object.entries(stats.plan_statistics).forEach(([plan, count]) => {
+                    const planBadge = document.createElement('span');
+                    planBadge.className = 'badge bg-light text-dark me-1';
+                    planBadge.textContent = `${plan}: ${count}`;
+                    planStatsDiv.appendChild(planBadge);
+                });
+                
+            } catch (error) {
+                console.error('Error loading contact statistics:', error);
+            }
+        }
+        
+        // Mark request as processed
+        async function markAsProcessed(requestId) {
+            try {
+                const response = await fetch(`/api/admin/contact-request/${requestId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        status: 'processed',
+                        processed: true
+                    })
+                });
+                
+                if (response.ok) {
+                    loadContactRequests();
+                    showAlert('success', 'Talep başarıyla işaretlendi!');
+                } else {
+                    showAlert('error', 'Talep işaretlenirken hata oluştu!');
+                }
+            } catch (error) {
+                console.error('Error marking request as processed:', error);
+                showAlert('error', 'Talep işaretlenirken hata oluştu!');
+            }
+        }
+        
+        // View request details
+        function viewRequestDetails(requestId) {
+            // Bu fonksiyon daha sonra modal ile detayları gösterecek
+            alert(`Talep ID: ${requestId} detayları gösterilecek`);
+        }
+        
+        // Refresh contact requests
+        function refreshContactRequests() {
+            loadContactRequests();
+        }
+
+        // Create license function
+        async function createLicense() {
+            const email = document.getElementById('license-email').value;
+            const licenseType = document.getElementById('license-type').value;
+            const duration = document.getElementById('license-duration').value;
+
+            console.log('Form values:', { email, licenseType, duration }); // Debug log
+
+            if (!email || !email.trim()) {
+                alert('Email adresi gereklidir!');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/create-license', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_email: email,
+                        license_type: licenseType,
+                        duration_days: parseInt(duration)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Lisans başarıyla oluşturuldu!');
+                    
+                    // Clear form
+                    document.getElementById('licenseForm').reset();
+                    
+                    // Hide form
+                    showCreateLicenseForm();
+                    
+                    // Reload data
+                    loadUsers();
+                    loadDashboard();
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        }
+
+        function showCreateLicenseForm() {
+            console.log('showCreateLicenseForm called'); // Debug log
+            const form = document.getElementById('createLicenseForm');
+            console.log('Form element:', form); // Debug log
+            if (form) {
+                const currentDisplay = form.style.display;
+                console.log('Current display:', currentDisplay); // Debug log
+                // Form gizliyse göster, görünürse gizle
+                form.style.display = currentDisplay === 'none' || currentDisplay === '' ? 'block' : 'none';
+                console.log('New display:', form.style.display); // Debug log
+            }
+        }
+
+        // License form submit event
+        document.addEventListener('DOMContentLoaded', function() {
+            const licenseForm = document.getElementById('licenseForm');
+            if (licenseForm) {
+                licenseForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    createLicense();
+                });
+            }
+        });
+
+        // License management functions
+        let currentLicenseData = null;
+
+        function viewLicense(email, licenseKey, licenseType, duration) {
+            console.log('viewLicense called with:', { email, licenseKey, licenseType, duration }); // Debug log
+            currentLicenseData = { email, licenseKey, licenseType, duration };
+            
+            // Populate modal
+            document.getElementById('modal-email').textContent = email;
+            document.getElementById('modal-license-type').textContent = licenseType;
+            document.getElementById('modal-duration').textContent = duration + ' gün';
+            
+            const licenseKeyElement = document.getElementById('modal-license-key');
+            console.log('License key element:', licenseKeyElement); // Debug log
+            console.log('License key value:', licenseKey); // Debug log
+            
+            // Handle empty or undefined license key
+            const displayKey = licenseKey && licenseKey !== 'undefined' && licenseKey !== '' ? licenseKey : 'Lisans anahtarı bulunamadı';
+            licenseKeyElement.value = displayKey;
+            console.log('License key element value after setting:', licenseKeyElement.value); // Debug log
+            
+            // Generate license text
+            const licenseText = generateLicenseText(email, licenseKey, licenseType, duration);
+            document.getElementById('modal-license-text').textContent = licenseText;
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('licenseModal'));
+            modal.show();
+        }
+
+        function generateLicenseText(email, licenseKey, licenseType, duration) {
+            const currentDate = new Date().toLocaleDateString('tr-TR');
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + parseInt(duration));
+            
+            return `TESTMATE STUDIO LİSANS ANLAŞMASI
+
+Lisans Sahibi: ${email}
+Lisans Türü: ${licenseType.toUpperCase()}
+Lisans Anahtarı: ${licenseKey}
+Veriliş Tarihi: ${currentDate}
+Geçerlilik Süresi: ${duration} gün
+Son Kullanma Tarihi: ${expiryDate.toLocaleDateString('tr-TR')}
+
+Bu lisans, TestMate Studio yazılımının kullanımı için verilmiştir.
+Lisans sahibi, yazılımı ticari ve kişisel amaçlarla kullanabilir.
+
+Lisans Koşulları:
+1. Bu lisans sadece belirtilen e-posta adresi için geçerlidir
+2. Lisans başkalarıyla paylaşılamaz
+3. Yazılımın tersine mühendisliği yapılamaz
+4. Lisans süresi dolduğunda yenilenmesi gerekir
+
+TestMate Studio - AI-Powered Test Automation Tool
+© 2024 TestMate Studio. Tüm hakları saklıdır.`;
+        }
+
+        function copyLicenseKey() {
+            const licenseKey = document.getElementById('modal-license-key');
+            licenseKey.select();
+            licenseKey.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(licenseKey.value);
+            
+            // Show success message
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.remove('btn-outline-secondary');
+            button.classList.add('btn-success');
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-secondary');
+            }, 2000);
+        }
+
+        function downloadLicense() {
+            if (!currentLicenseData) return;
+            
+            const licenseText = document.getElementById('modal-license-text').textContent;
+            const blob = new Blob([licenseText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `testmate_license_${currentLicenseData.email.replace('@', '_at_')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        async function emailLicense() {
+            if (!currentLicenseData) return;
+            
+            try {
+                const response = await fetch('/api/admin/resend-license', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: currentLicenseData.email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lisans başarıyla e-posta ile gönderildi!');
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        }
+
+        async function resendLicense(email) {
+            if (!confirm(`${email} adresine lisans yeniden gönderilsin mi?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/resend-license', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lisans başarıyla yeniden gönderildi!');
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        }
+
+        async function regenerateLicense(email) {
+            if (!confirm(`${email} için lisans yeniden oluşturulsun mu? Bu işlem mevcut lisansı geçersiz kılacaktır.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/admin/regenerate-license', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Lisans başarıyla yeniden oluşturuldu!');
+                    // Reload users to show updated license
+                    loadUsers();
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html> 

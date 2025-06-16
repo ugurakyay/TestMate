@@ -1,0 +1,92 @@
+{
+  "b1c4f8fe-063a-4ac8-ae34-d6aacb2751f9": {
+    "user_id": "b1c4f8fe-063a-4ac8-ae34-d6aacb2751f9",
+    "email": "test@example.com",
+    "license_key": "BASIC-02379DB3",
+    "license_type": "basic",
+    "created_date": "2025-06-16T13:17:16.332698",
+    "expiry_date": "2025-07-16T13:17:16.332702",
+    "features": {
+      "test_generation": 10,
+      "locator_analysis": 5,
+      "excel_processing": true,
+      "project_generation": 3
+    },
+    "usage": {
+      "test_generation": 0,
+      "locator_analysis": 0,
+      "project_generation": 0
+    },
+    "status": "active",
+    "machine_id": null
+  },
+  "9f77c4f8-516c-4f7a-ad1b-3e7c0e4e1e28": {
+    "user_id": "9f77c4f8-516c-4f7a-ad1b-3e7c0e4e1e28",
+    "email": "demo@company.com",
+    "license_key": "PROFESSIONAL-EE50D56F",
+    "license_type": "professional",
+    "created_date": "2025-06-16T13:17:16.332857",
+    "expiry_date": "2025-09-14T13:17:16.332858",
+    "features": {
+      "test_generation": 100,
+      "locator_analysis": 50,
+      "excel_processing": true,
+      "project_generation": 20,
+      "ai_enhancement": true,
+      "priority_support": true
+    },
+    "usage": {
+      "test_generation": 0,
+      "locator_analysis": 0,
+      "project_generation": 0
+    },
+    "status": "active",
+    "machine_id": null
+  },
+  "ac2fde8e-50b2-4251-9d7a-1d5802195c4c": {
+    "user_id": "ac2fde8e-50b2-4251-9d7a-1d5802195c4c",
+    "email": "enterprise@corp.com",
+    "license_key": "ENTERPRISE-909EB694",
+    "license_type": "enterprise",
+    "created_date": "2025-06-16T13:17:16.333062",
+    "expiry_date": "2026-06-16T13:17:16.333063",
+    "features": {
+      "test_generation": -1,
+      "locator_analysis": -1,
+      "excel_processing": true,
+      "project_generation": -1,
+      "ai_enhancement": true,
+      "priority_support": true,
+      "custom_templates": true,
+      "api_access": true
+    },
+    "usage": {
+      "test_generation": 0,
+      "locator_analysis": 0,
+      "project_generation": 0
+    },
+    "status": "active",
+    "machine_id": null
+  },
+  "5da49cc9-0ff2-41ff-baff-5eb282b154d1": {
+    "user_id": "5da49cc9-0ff2-41ff-baff-5eb282b154d1",
+    "email": "baris@baris.com",
+    "license_key": "BASIC-05BB4814",
+    "license_type": "basic",
+    "created_date": "2025-06-16T13:32:45.243913",
+    "expiry_date": "2025-07-16T13:32:45.243935",
+    "features": {
+      "test_generation": 10,
+      "locator_analysis": 5,
+      "excel_processing": true,
+      "project_generation": 3
+    },
+    "usage": {
+      "test_generation": 0,
+      "locator_analysis": 0,
+      "project_generation": 0
+    },
+    "status": "active",
+    "machine_id": null
+  }
+}

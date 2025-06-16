@@ -1,0 +1,9 @@
+{
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "sender_email": "info@testmatestudio.com",
+    "admin_email": "ugurakyay@gmail.com",
+    "sender_password": "rwzp ontj sulg mvsn",
+    "use_ssl": true,
+    "use_tls": true
+} 

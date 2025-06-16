@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Excel İşleme</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: rgba(118, 75, 162, 0.05);
+        }
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+        .scenario-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid #667eea;
+        }
+        .progress-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/generate">Test Oluştur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/analyze">Locator Analizi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/excel">Excel İşleme</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/execute">Test Çalıştır</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/license">Lisans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <h2 class="text-center mb-4">
+                <i class="fas fa-file-excel me-2"></i>Excel İşleme
+            </h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-download me-2"></i>Template İndir
+                            </h5>
+                            <p class="card-text">Test senaryolarınızı Excel formatında hazırlamak için template indirin.</p>
+                            <button class="btn btn-primary" onclick="downloadTemplate()">
+                                <i class="fas fa-download me-2"></i>Template İndir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-upload me-2"></i>Excel Yükle
+                            </h5>
+                            <p class="card-text">Hazırladığınız Excel dosyasını yükleyin ve otomatik proje oluşturun.</p>
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                                <h5>Excel Dosyasını Sürükleyin veya Seçin</h5>
+                                <p class="text-muted">.xlsx, .xls dosyaları desteklenir</p>
+                                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display: none;">
+                                <button class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Dosya Seç
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="progress-container mt-4" id="progressContainer">
+                <h5>Dosya İşleniyor...</h5>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div id="validationResults" class="mt-4" style="display: none;">
+                <h4><i class="fas fa-check-circle me-2"></i>Validasyon Sonuçları</h4>
+                <div id="validationContent"></div>
+            </div>
+            
+            <div id="scenariosPreview" class="mt-4" style="display: none;">
+                <h4><i class="fas fa-list me-2"></i>Senaryo Önizlemesi</h4>
+                <div id="scenariosContent"></div>
+                <div class="text-center mt-3">
+                    <button class="btn btn-success btn-lg" onclick="generateProject()">
+                        <i class="fas fa-rocket me-2"></i>Proje Oluştur
+                    </button>
+                </div>
+            </div>
+            
+            <div id="projectProgress" class="mt-4" style="display: none;">
+                <h4><i class="fas fa-cogs me-2"></i>Proje Oluşturuluyor...</h4>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+                <p class="text-center mt-2">Test projeniz hazırlanıyor...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function downloadTemplate() {
+            window.location.href = '/api/download-template';
+        }
+        
+        async function handleFile(file) {
+            if (!file.name.match(/\.(xlsx|xls)$/)) {
+                alert('Lütfen geçerli bir Excel dosyası seçin (.xlsx veya .xls)');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('validationResults').style.display = 'none';
+            document.getElementById('scenariosPreview').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/upload-excel', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store scenarios globally for project generation
+                    window.uploadedScenarios = data.scenarios;
+                    
+                    displayValidationResults(data.validation);
+                    displayScenariosPreview(data.scenarios);
+                    document.getElementById('validationResults').style.display = 'block';
+                    document.getElementById('scenariosPreview').style.display = 'block';
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('progressContainer').style.display = 'none';
+            }
+        }
+        
+        function displayValidationResults(validation) {
+            const container = document.getElementById('validationContent');
+            container.innerHTML = '';
+            
+            if (validation.errors.length === 0) {
+                container.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Dosya başarıyla doğrulandı! ${validation.scenarios_count} senaryo bulundu.
+                    </div>
+                `;
+            } else {
+                const errorList = validation.errors.map(error => `<li>${error}</li>`).join('');
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Dosyada ${validation.errors.length} hata bulundu:
+                        <ul class="mt-2">${errorList}</ul>
+                    </div>
+                `;
+            }
+        }
+        
+        function displayScenariosPreview(scenarios) {
+            const container = document.getElementById('scenariosContent');
+            container.innerHTML = '';
+            
+            scenarios.forEach((scenario, index) => {
+                const scenarioCard = document.createElement('div');
+                scenarioCard.className = 'scenario-card';
+                scenarioCard.innerHTML = `
+                    <h6><i class="fas fa-play me-2"></i>Senaryo ${index + 1}: ${scenario.name}</h6>
+                    <p><strong>Açıklama:</strong> ${scenario.description}</p>
+                    <p><strong>Test Türü:</strong> ${scenario.test_type}</p>
+                    <p><strong>Adım Sayısı:</strong> ${scenario.steps.length}</p>
+                `;
+                container.appendChild(scenarioCard);
+            });
+        }
+        
+        async function generateProject() {
+            document.getElementById('projectProgress').style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/generate-project', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        project_name: 'excel_generated_project',
+                        scenarios: window.uploadedScenarios || []
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Download the project as a zip file
+                    const downloadResponse = await fetch(`/api/download-project/${data.project_path.split('/').pop()}`);
+                    if (downloadResponse.ok) {
+                        const blob = await downloadResponse.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'test_project.zip';
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        
+                        alert('Proje başarıyla oluşturuldu ve indirildi!');
+                    } else {
+                        alert('Proje oluşturuldu ancak indirme başarısız: ' + data.message);
+                    }
+                } else {
+                    alert('Hata: ' + data.detail);
+                }
+            } catch (error) {
+                alert('Bir hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('projectProgress').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

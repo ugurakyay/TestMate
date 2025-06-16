@@ -1,0 +1,217 @@
+{
+  "common_elements": {
+    "login_form": {
+      "username_field": {
+        "id": "username",
+        "name": "username",
+        "css": "input[type='text'][name='username']",
+        "xpath": "//input[@name='username']",
+        "placeholder": "Username"
+      },
+      "password_field": {
+        "id": "password",
+        "name": "password",
+        "css": "input[type='password'][name='password']",
+        "xpath": "//input[@name='password']",
+        "placeholder": "Password"
+      },
+      "login_button": {
+        "id": "login-btn",
+        "css": "button[type='submit']",
+        "xpath": "//button[@type='submit']",
+        "text": "Login"
+      }
+    },
+    "navigation": {
+      "menu_toggle": {
+        "id": "menu-toggle",
+        "css": ".menu-toggle, .hamburger-menu",
+        "xpath": "//button[contains(@class, 'menu')]"
+      },
+      "home_link": {
+        "id": "home-link",
+        "css": "a[href='/']",
+        "xpath": "//a[@href='/']",
+        "text": "Home"
+      },
+      "logout_button": {
+        "id": "logout",
+        "css": "a[href*='logout'], button[onclick*='logout']",
+        "xpath": "//a[contains(@href, 'logout')]",
+        "text": "Logout"
+      }
+    },
+    "forms": {
+      "submit_button": {
+        "id": "submit",
+        "css": "button[type='submit'], input[type='submit']",
+        "xpath": "//button[@type='submit'] | //input[@type='submit']",
+        "text": "Submit"
+      },
+      "cancel_button": {
+        "id": "cancel",
+        "css": "button[type='button']:contains('Cancel')",
+        "xpath": "//button[contains(text(), 'Cancel')]",
+        "text": "Cancel"
+      },
+      "save_button": {
+        "id": "save",
+        "css": "button:contains('Save')",
+        "xpath": "//button[contains(text(), 'Save')]",
+        "text": "Save"
+      }
+    },
+    "tables": {
+      "table_header": {
+        "css": "table thead th",
+        "xpath": "//table//thead//th"
+      },
+      "table_body": {
+        "css": "table tbody tr",
+        "xpath": "//table//tbody//tr"
+      },
+      "first_row": {
+        "css": "table tbody tr:first-child",
+        "xpath": "//table//tbody//tr[1]"
+      }
+    },
+    "modals": {
+      "modal_overlay": {
+        "css": ".modal, .overlay, [role='dialog']",
+        "xpath": "//div[contains(@class, 'modal') or contains(@class, 'overlay')]"
+      },
+      "modal_close": {
+        "css": ".modal .close, .modal .btn-close",
+        "xpath": "//div[contains(@class, 'modal')]//button[contains(@class, 'close')]",
+        "text": "×"
+      }
+    },
+    "alerts": {
+      "success_message": {
+        "css": ".alert-success, .success-message",
+        "xpath": "//div[contains(@class, 'alert-success')]"
+      },
+      "error_message": {
+        "css": ".alert-danger, .error-message",
+        "xpath": "//div[contains(@class, 'alert-danger')]"
+      },
+      "warning_message": {
+        "css": ".alert-warning, .warning-message",
+        "xpath": "//div[contains(@class, 'alert-warning')]"
+      }
+    }
+  },
+  "ecommerce": {
+    "product_list": {
+      "product_card": {
+        "css": ".product-card, .item-card",
+        "xpath": "//div[contains(@class, 'product-card')]"
+      },
+      "add_to_cart": {
+        "css": ".add-to-cart, .btn-cart",
+        "xpath": "//button[contains(@class, 'add-to-cart')]",
+        "text": "Add to Cart"
+      },
+      "buy_now": {
+        "css": ".buy-now, .btn-buy",
+        "xpath": "//button[contains(@class, 'buy-now')]",
+        "text": "Buy Now"
+      }
+    },
+    "shopping_cart": {
+      "cart_icon": {
+        "css": ".cart-icon, .shopping-cart",
+        "xpath": "//div[contains(@class, 'cart-icon')]"
+      },
+      "cart_count": {
+        "css": ".cart-count, .cart-badge",
+        "xpath": "//span[contains(@class, 'cart-count')]"
+      },
+      "checkout_button": {
+        "css": ".checkout-btn, .btn-checkout",
+        "xpath": "//button[contains(@class, 'checkout')]",
+        "text": "Checkout"
+      }
+    }
+  },
+  "social_media": {
+    "post_actions": {
+      "like_button": {
+        "css": ".like-btn, .btn-like",
+        "xpath": "//button[contains(@class, 'like')]",
+        "text": "Like"
+      },
+      "share_button": {
+        "css": ".share-btn, .btn-share",
+        "xpath": "//button[contains(@class, 'share')]",
+        "text": "Share"
+      },
+      "comment_button": {
+        "css": ".comment-btn, .btn-comment",
+        "xpath": "//button[contains(@class, 'comment')]",
+        "text": "Comment"
+      }
+    },
+    "profile": {
+      "profile_picture": {
+        "css": ".profile-pic, .avatar",
+        "xpath": "//img[contains(@class, 'profile-pic')]"
+      },
+      "edit_profile": {
+        "css": ".edit-profile, .btn-edit",
+        "xpath": "//button[contains(@class, 'edit-profile')]",
+        "text": "Edit Profile"
+      }
+    }
+  },
+  "mobile_apps": {
+    "common_actions": {
+      "back_button": {
+        "accessibility_id": "Back",
+        "xpath": "//android.widget.Button[@content-desc='Back']",
+        "ios_predicate": "type == 'XCUIElementTypeButton' AND name == 'Back'"
+      },
+      "menu_button": {
+        "accessibility_id": "Menu",
+        "xpath": "//android.widget.Button[@content-desc='Menu']",
+        "ios_predicate": "type == 'XCUIElementTypeButton' AND name == 'Menu'"
+      },
+      "home_button": {
+        "accessibility_id": "Home",
+        "xpath": "//android.widget.Button[@content-desc='Home']",
+        "ios_predicate": "type == 'XCUIElementTypeButton' AND name == 'Home'"
+      }
+    },
+    "forms": {
+      "text_input": {
+        "class_name": "android.widget.EditText",
+        "ios_predicate": "type == 'XCUIElementTypeTextField'"
+      },
+      "button": {
+        "class_name": "android.widget.Button",
+        "ios_predicate": "type == 'XCUIElementTypeButton'"
+      }
+    }
+  },
+  "api_endpoints": {
+    "common": {
+      "health_check": "/health",
+      "status": "/status",
+      "version": "/version",
+      "metrics": "/metrics"
+    },
+    "auth": {
+      "login": "/auth/login",
+      "logout": "/auth/logout",
+      "refresh": "/auth/refresh",
+      "register": "/auth/register"
+    },
+    "users": {
+      "get_users": "/users",
+      "get_user": "/users/{id}",
+      "create_user": "/users",
+      "update_user": "/users/{id}",
+      "delete_user": "/users/{id}"
+    }
+  }
+} 

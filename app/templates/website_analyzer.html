@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Analyzer - TestMate Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .form-section h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        .results-section {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stats-card h4 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+        }
+        
+        .stats-card p {
+            color: #6c757d;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #667eea;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+        }
+        
+        .progress {
+            height: 8px;
+            border-radius: 10px;
+            background-color: #e9ecef;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+        }
+        
+        .feature-highlight {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .feature-highlight i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .download-section {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .download-section h4 {
+            margin-bottom: 20px;
+        }
+        
+        .download-btn {
+            background: white;
+            color: #28a745;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
+            color: #28a745;
+        }
+        
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: #667eea !important;
+        }
+        
+        .nav-link {
+            color: #495057 !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #667eea !important;
+        }
+        
+        .nav-link.active {
+            color: #667eea !important;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-robot me-2"></i>TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/generate"><i class="fas fa-magic me-1"></i>Test Oluştur</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/analyze"><i class="fas fa-search me-1"></i>Element Analizi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/website-analyzer"><i class="fas fa-globe me-1"></i>Website Analizi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/excel"><i class="fas fa-file-excel me-1"></i>Excel İşleme</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/execute"><i class="fas fa-play me-1"></i>Test Çalıştır</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-globe me-3"></i>Website Analyzer</h1>
+                <p>Web sitesinin HTML kaynağını analiz edin ve tıklanabilir elementleri tespit edin</p>
+            </div>
+
+            <!-- Content -->
+            <div class="content">
+                <!-- Feature Highlight -->
+                <div class="feature-highlight">
+                    <i class="fas fa-lightbulb"></i>
+                    <h5>Yeni Özellik!</h5>
+                    <p>Web sitesinin kaynağını yükleyerek tüm tıklanabilir elementleri otomatik olarak tespit edin ve Excel checklist formatında indirin.</p>
+                </div>
+
+                <!-- Input Form -->
+                <div class="form-section">
+                    <h3><i class="fas fa-upload me-2"></i>Website Kaynağını Yükleyin</h3>
+                    <form id="websiteAnalysisForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="websiteUrl" class="form-label">Website URL (Opsiyonel)</label>
+                                    <input type="url" class="form-control" id="websiteUrl" placeholder="https://example.com">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="analysisType" class="form-label">Analiz Türü</label>
+                                    <select class="form-select" id="analysisType">
+                                        <option value="quick">Hızlı Analiz</option>
+                                        <option value="detailed">Detaylı Analiz</option>
+                                        <option value="full">Tam Analiz + Excel Checklist</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="htmlSource" class="form-label">HTML Kaynağı</label>
+                            <textarea class="form-control" id="htmlSource" rows="10" placeholder="HTML kaynağını buraya yapıştırın..."></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Web sitesinin HTML kaynağını kopyalayıp buraya yapıştırın. (Ctrl+A, Ctrl+C, Ctrl+V)
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-primary" onclick="analyzeWebsite()">
+                                <i class="fas fa-search me-2"></i>Analiz Et
+                            </button>
+                            <button type="button" class="btn btn-success" onclick="generateChecklist()">
+                                <i class="fas fa-file-excel me-2"></i>Excel Checklist Oluştur
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">
+                                <i class="fas fa-eraser me-2"></i>Temizle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <h4 class="mt-3">Website analiz ediliyor...</h4>
+                    <p>Bu işlem birkaç saniye sürebilir.</p>
+                    <div class="progress mt-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="results-section" id="resultsSection">
+                    <h3><i class="fas fa-chart-bar me-2"></i>Analiz Sonuçları</h3>
+                    
+                    <!-- Summary Stats -->
+                    <div class="row" id="summaryStats">
+                        <!-- Stats will be populated here -->
+                    </div>
+                    
+                    <!-- Detailed Results -->
+                    <div class="mt-4">
+                        <h4><i class="fas fa-list me-2"></i>Detaylı Sonuçlar</h4>
+                        <div id="detailedResults">
+                            <!-- Detailed results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Section -->
+                <div class="download-section" id="downloadSection">
+                    <h4><i class="fas fa-download me-2"></i>Excel Checklist Hazır!</h4>
+                    <p>Website analizi tamamlandı ve Excel checklist oluşturuldu.</p>
+                    <a href="#" class="download-btn" id="downloadLink">
+                        <i class="fas fa-file-excel me-2"></i>Excel Dosyasını İndir
+                    </a>
+                </div>
+
+                <!-- Dinamik Web Sitesi Analizi -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-rocket me-2"></i>
+                            Dinamik Web Sitesi Analizi (JavaScript ile Render Edilen Siteler)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            React, Vue, Angular, Next.js gibi modern web uygulamalarını analiz etmek için URL girin. 
+                            Sistem otomatik olarak sayfayı yükleyip JavaScript ile render edilen elementleri tespit edecektir.
+                        </p>
+                        
+                        <form id="dynamicAnalysisForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="dynamicUrl" class="form-label">Web Sitesi URL'si *</label>
+                                        <input type="url" class="form-control" id="dynamicUrl" name="url" 
+                                               placeholder="https://example.com" required>
+                                        <div class="form-text">Analiz edilecek web sitesinin tam URL'sini girin</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="waitTime" class="form-label">Bekleme Süresi (saniye)</label>
+                                        <input type="number" class="form-control" id="waitTime" name="wait_time" 
+                                               value="10" min="5" max="60">
+                                        <div class="form-text">JavaScript'in yüklenmesi için beklenecek süre</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Login Credentials Section -->
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-lock me-2"></i>
+                                        Giriş Bilgileri (Opsiyonel)
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted small mb-3">
+                                        Eğer site kullanıcı adı/şifre gerektiriyorsa, bu bilgileri doldurun.
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="username" class="form-label">Kullanıcı Adı</label>
+                                                <input type="text" class="form-control" id="username" name="username" 
+                                                       placeholder="kullanici@example.com">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Şifre</label>
+                                                <input type="password" class="form-control" id="password" name="password" 
+                                                       placeholder="Şifrenizi girin">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Advanced Selectors -->
+                                    <div class="accordion" id="advancedSelectors">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header">
+                                                <button class="accordion-button collapsed" type="button" 
+                                                        data-bs-toggle="collapse" data-bs-target="#collapseSelectors">
+                                                    <i class="fas fa-cog me-2"></i>
+                                                    Gelişmiş Seçici Ayarları
+                                                </button>
+                                            </h2>
+                                            <div id="collapseSelectors" class="accordion-collapse collapse" 
+                                                 data-bs-parent="#advancedSelectors">
+                                                <div class="accordion-body">
+                                                    <p class="text-muted small mb-3">
+                                                        Varsayılan seçiciler çalışmazsa, özel CSS seçicileri belirleyin.
+                                                    </p>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="mb-3">
+                                                                <label for="usernameSelector" class="form-label">Kullanıcı Adı Seçici</label>
+                                                                <input type="text" class="form-control" id="usernameSelector" 
+                                                                       name="username_selector" 
+                                                                       placeholder="input[name='username']">
+                                                                <div class="form-text">Varsayılan: input[name="username"], input[name="email"]</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="mb-3">
+                                                                <label for="passwordSelector" class="form-label">Şifre Seçici</label>
+                                                                <input type="text" class="form-control" id="passwordSelector" 
+                                                                       name="password_selector" 
+                                                                       placeholder="input[name='password']">
+                                                                <div class="form-text">Varsayılan: input[name="password"], input[type="password"]</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="mb-3">
+                                                                <label for="submitSelector" class="form-label">Giriş Butonu Seçici</label>
+                                                                <input type="text" class="form-control" id="submitSelector" 
+                                                                       name="submit_selector" 
+                                                                       placeholder="button[type='submit']">
+                                                                <div class="form-text">Varsayılan: button[type="submit"], input[type="submit"]</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-rocket me-2"></i>
+                                    Dinamik Analizi Başlat
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="dynamicAnalysisResult" class="mt-4" style="display: none;">
+                            <div class="alert alert-info">
+                                <h6>Dinamik Analiz Sonuçları</h6>
+                                <div id="dynamicAnalysisContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kullanım Kılavuzu -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-book me-2"></i>
+                            Kullanım Kılavuzu
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">📋 Statik HTML Analizi</h6>
+                                <ul class="list-unstyled">
+                                    <li>✅ HTML kaynağını kopyalayıp yapıştırın</li>
+                                    <li>✅ Basit web siteleri için ideal</li>
+                                    <li>✅ JavaScript gerektirmeyen siteler</li>
+                                    <li>✅ Hızlı analiz</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-success">🚀 Dinamik Analiz</h6>
+                                <ul class="list-unstyled">
+                                    <li>✅ Sadece URL girin</li>
+                                    <li>✅ JavaScript ile render edilen siteler</li>
+                                    <li>✅ React, Vue, Angular, Next.js desteği</li>
+                                    <li>✅ Dinamik elementleri tespit eder</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6 class="text-warning">🔐 Login Gerektiren Siteler</h6>
+                                <div class="alert alert-info">
+                                    <strong>Kullanım:</strong>
+                                    <ol>
+                                        <li>URL'yi girin</li>
+                                        <li>Kullanıcı adı ve şifre alanlarını doldurun</li>
+                                        <li>Gerekirse gelişmiş seçici ayarlarını kullanın</li>
+                                        <li>Analizi başlatın</li>
+                                    </ol>
+                                    
+                                    <strong>Desteklenen Seçiciler:</strong>
+                                    <ul>
+                                        <li><code>input[name="username"]</code> - Kullanıcı adı alanı</li>
+                                        <li><code>input[name="password"]</code> - Şifre alanı</li>
+                                        <li><code>button[type="submit"]</code> - Giriş butonu</li>
+                                    </ul>
+                                    
+                                    <strong>Özel Seçiciler:</strong>
+                                    <p class="mb-0">Varsayılan seçiciler çalışmazsa, gelişmiş ayarlar bölümünden özel CSS seçicileri belirleyebilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-info">📊 Analiz Sonuçları</h6>
+                                <ul class="list-unstyled">
+                                    <li>📈 Tıklanabilir elementler</li>
+                                    <li>📝 Form elementleri</li>
+                                    <li>🧭 Navigasyon elementleri</li>
+                                    <li>⚡ JavaScript event'leri</li>
+                                    <li>📋 Excel checklist</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">🎯 Test Önerileri</h6>
+                                <ul class="list-unstyled">
+                                    <li>🔍 Element görünürlüğü</li>
+                                    <li>🎨 CSS seçicileri</li>
+                                    <li>📱 Responsive davranış</li>
+                                    <li>⚡ Performans testleri</li>
+                                    <li>🔒 Güvenlik kontrolleri</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentAnalysisData = null;
+
+        async function analyzeWebsite() {
+            const htmlSource = document.getElementById('htmlSource').value.trim();
+            const websiteUrl = document.getElementById('websiteUrl').value.trim();
+            
+            if (!htmlSource) {
+                showAlert('error', 'Lütfen HTML kaynağını girin!');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await fetch('/api/analyze-website', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        html_source: htmlSource,
+                        url: websiteUrl
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentAnalysisData = data.data;
+                    displayAnalysisResults(data.data);
+                    showAlert('success', 'Website analizi başarıyla tamamlandı!');
+                } else {
+                    const errorMessage = data.detail || 'Bilinmeyen hata';
+                    showAlert('danger', `Analiz hatası: ${errorMessage.replace(/\n/g, '<br>')}`);
+                }
+            } catch (error) {
+                showAlert('error', 'Bağlantı hatası: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function generateChecklist() {
+            const htmlSource = document.getElementById('htmlSource').value.trim();
+            const websiteUrl = document.getElementById('websiteUrl').value.trim();
+            
+            if (!htmlSource) {
+                showAlert('error', 'Lütfen HTML kaynağını girin!');
+                return;
+            }
+            
+            showLoading(true);
+            
+            try {
+                const response = await fetch('/api/generate-website-checklist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        html_source: htmlSource,
+                        url: websiteUrl
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Show download section
+                    document.getElementById('downloadSection').style.display = 'block';
+                    document.getElementById('downloadLink').href = data.data.download_path;
+                    
+                    // Display summary if available
+                    if (data.data.analysis_summary) {
+                        displaySummary(data.data.analysis_summary);
+                    }
+                    
+                    showAlert('success', 'Excel checklist başarıyla oluşturuldu!');
+                } else {
+                    const errorMessage = data.detail || 'Bilinmeyen hata';
+                    showAlert('danger', `Checklist oluşturulurken hata: ${errorMessage.replace(/\n/g, '<br>')}`);
+                }
+            } catch (error) {
+                showAlert('error', 'Bağlantı hatası: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayAnalysisResults(data, title = 'Analiz Sonuçları') {
+            const resultsSection = document.getElementById('resultsSection');
+            const summaryStats = document.getElementById('summaryStats');
+            const detailedResults = document.getElementById('detailedResults');
+            
+            // Store current analysis data for Excel generation
+            currentAnalysisData = data;
+            
+            // Clear previous results
+            summaryStats.innerHTML = '';
+            detailedResults.innerHTML = '';
+            
+            // Create summary stats HTML
+            summaryStats.innerHTML = `
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4>${data.clickable_elements ? data.clickable_elements.length : 0}</h4>
+                        <p>Tıklanabilir Element</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4>${data.form_elements ? data.form_elements.length : 0}</h4>
+                        <p>Form Elementi</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4>${data.navigation_elements ? data.navigation_elements.length : 0}</h4>
+                        <p>Navigasyon Elementi</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h4>${(data.clickable_elements ? data.clickable_elements.length : 0) + (data.form_elements ? data.form_elements.length : 0) + (data.navigation_elements ? data.navigation_elements.length : 0)}</h4>
+                        <p>Toplam Element</p>
+                    </div>
+                </div>
+            `;
+            
+            // Create detailed results HTML
+            detailedResults.innerHTML = `
+                <div class="accordion" id="resultsAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="clickableHeader">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#clickableCollapse">
+                                <i class="fas fa-mouse-pointer me-2"></i>Tıklanabilir Elementler (${data.clickable_elements ? data.clickable_elements.length : 0})
+                            </button>
+                        </h2>
+                        <div id="clickableCollapse" class="accordion-collapse collapse show" data-bs-parent="#resultsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Tür</th>
+                                                <th>Metin</th>
+                                                <th>Href/ID</th>
+                                                <th>Öncelik</th>
+                                                <th>Önerilen Aksiyon</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.clickable_elements ? data.clickable_elements.map(element => `
+                                                <tr>
+                                                    <td><span class="badge bg-primary">${element.type}</span></td>
+                                                    <td>${element.text}</td>
+                                                    <td>${element.href || element.id || '-'}</td>
+                                                    <td><span class="badge bg-${element.priority === 'High' ? 'danger' : element.priority === 'Medium' ? 'warning' : 'secondary'}">${element.priority}</span></td>
+                                                    <td>${element.recommended_action}</td>
+                                                </tr>
+                                            `).join('') : '<tr><td colspan="5" class="text-center text-muted">Tıklanabilir element bulunamadı</td></tr>'}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="formHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#formCollapse">
+                                <i class="fas fa-edit me-2"></i>Form Elementleri (${data.form_elements ? data.form_elements.length : 0})
+                            </button>
+                        </h2>
+                        <div id="formCollapse" class="accordion-collapse collapse" data-bs-parent="#resultsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Tür</th>
+                                                <th>Name/ID</th>
+                                                <th>Placeholder</th>
+                                                <th>Öncelik</th>
+                                                <th>Önerilen Aksiyon</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.form_elements ? data.form_elements.map(element => `
+                                                <tr>
+                                                    <td><span class="badge bg-success">${element.type}</span></td>
+                                                    <td>${element.name || element.id || '-'}</td>
+                                                    <td>${element.placeholder || '-'}</td>
+                                                    <td><span class="badge bg-${element.priority === 'High' ? 'danger' : element.priority === 'Medium' ? 'warning' : 'secondary'}">${element.priority}</span></td>
+                                                    <td>${element.recommended_action}</td>
+                                                </tr>
+                                            `).join('') : '<tr><td colspan="5" class="text-center text-muted">Form elementi bulunamadı</td></tr>'}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="navHeader">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navCollapse">
+                                <i class="fas fa-compass me-2"></i>Navigasyon Elementleri (${data.navigation_elements ? data.navigation_elements.length : 0})
+                            </button>
+                        </h2>
+                        <div id="navCollapse" class="accordion-collapse collapse" data-bs-parent="#resultsAccordion">
+                            <div class="accordion-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Tür</th>
+                                                <th>Metin</th>
+                                                <th>Href</th>
+                                                <th>Öncelik</th>
+                                                <th>Önerilen Aksiyon</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${data.navigation_elements ? data.navigation_elements.map(element => `
+                                                <tr>
+                                                    <td><span class="badge bg-warning">${element.type}</span></td>
+                                                    <td>${element.text}</td>
+                                                    <td>${element.href || '-'}</td>
+                                                    <td><span class="badge bg-${element.priority === 'High' ? 'danger' : element.priority === 'Medium' ? 'warning' : 'secondary'}">${element.priority}</span></td>
+                                                    <td>${element.recommended_action}</td>
+                                                </tr>
+                                            `).join('') : '<tr><td colspan="5" class="text-center text-muted">Navigasyon elementi bulunamadı</td></tr>'}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsSection.style.display = 'block';
+        }
+
+        function displaySummary(summary) {
+            // Summary can be displayed in a separate section if needed
+            console.log('Analysis Summary:', summary);
+        }
+
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            loading.style.display = show ? 'block' : 'none';
+        }
+
+        function clearForm() {
+            document.getElementById('websiteAnalysisForm').reset();
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('downloadSection').style.display = 'none';
+            currentAnalysisData = null;
+        }
+
+        function showAlert(type, message) {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'error' || type === 'danger' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            // Insert at the top of content
+            const content = document.querySelector('.content');
+            content.insertBefore(alertDiv, content.firstChild);
+            
+            // Auto dismiss after 8 seconds for errors, 5 seconds for others
+            const dismissTime = (type === 'error' || type === 'danger') ? 8000 : 5000;
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, dismissTime);
+        }
+
+        // Add helpful tips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add helpful tips
+            const tips = [
+                "💡 İpucu: HTML kaynağını almak için web sayfasında F12 tuşuna basın ve Elements sekmesinden HTML'i kopyalayın.",
+                "💡 İpucu: Sadece belirli bir bölümü analiz etmek istiyorsanız, o bölümün HTML'ini kopyalayabilirsiniz.",
+                "💡 İpucu: Excel checklist'i test senaryolarınızı planlamak için kullanabilirsiniz.",
+                "💡 İpucu: Dinamik analiz için JavaScript ile yüklenen içerikleri de tespit edebilirsiniz.",
+                "💡 İpucu: Login gerektiren siteler için kullanıcı adı ve şifre girebilirsiniz.",
+                "💡 İpucu: Özel CSS seçiciler kullanarak login formlarını özelleştirebilirsiniz."
+            ];
+            
+            // Show a random tip
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            showAlert('info', randomTip);
+        });
+
+        // Dinamik analiz formu
+        document.getElementById('dynamicAnalysisForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('dynamicUrl').value;
+            const waitTime = parseInt(document.getElementById('waitTime').value);
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const usernameSelector = document.getElementById('usernameSelector').value;
+            const passwordSelector = document.getElementById('passwordSelector').value;
+            const submitSelector = document.getElementById('submitSelector').value;
+            
+            if (!url) {
+                showAlert('warning', 'Lütfen geçerli bir URL girin');
+                return;
+            }
+            
+            // Loading göster
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Analiz Ediliyor...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Login credentials hazırla
+                let loginCredentials = null;
+                if (username && password) {
+                    loginCredentials = {
+                        username: username,
+                        password: password
+                    };
+                    
+                    // Özel seçiciler varsa ekle
+                    if (usernameSelector) {
+                        loginCredentials.username_selector = usernameSelector;
+                    }
+                    if (passwordSelector) {
+                        loginCredentials.password_selector = passwordSelector;
+                    }
+                    if (submitSelector) {
+                        loginCredentials.submit_selector = submitSelector;
+                    }
+                }
+                
+                const response = await fetch('/api/analyze-dynamic-website', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        wait_time: waitTime,
+                        login_credentials: loginCredentials
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Sonuçları göster
+                    displayAnalysisResults(result, 'Dinamik Analiz Sonuçları');
+                    
+                    // Excel checklist oluştur
+                    await generateDynamicChecklist(url, waitTime, loginCredentials);
+                    
+                    showAlert('success', 'Dinamik analiz başarıyla tamamlandı!');
+                } else {
+                    const errorMessage = result.detail || result.error || 'Bilinmeyen hata';
+                    showAlert('danger', `Analiz hatası: ${errorMessage.replace(/\n/g, '<br>')}`);
+                }
+                
+            } catch (error) {
+                console.error('Dinamik analiz hatası:', error);
+                showAlert('danger', 'Dinamik analiz sırasında bir hata oluştu');
+            } finally {
+                // Loading'i kaldır
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+        
+        // Dinamik checklist oluştur
+        async function generateDynamicChecklist(url, waitTime, loginCredentials) {
+            try {
+                const response = await fetch('/api/generate-dynamic-checklist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                        wait_time: waitTime,
+                        login_credentials: loginCredentials
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Download link oluştur
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = result.data.download_path;
+                    downloadLink.className = 'btn btn-success btn-sm ms-2';
+                    downloadLink.innerHTML = '<i class="fas fa-download me-1"></i>Excel İndir';
+                    downloadLink.download = result.data.filename;
+                    
+                    // Sonuç alanına ekle
+                    const resultsDiv = document.getElementById('dynamicAnalysisContent');
+                    if (resultsDiv) {
+                        const downloadDiv = document.createElement('div');
+                        downloadDiv.className = 'mt-3';
+                        downloadDiv.appendChild(downloadLink);
+                        resultsDiv.appendChild(downloadDiv);
+                        
+                        // Show the dynamic results section
+                        document.getElementById('dynamicAnalysisResult').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Checklist oluşturma hatası:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

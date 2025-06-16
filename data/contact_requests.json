@@ -1,0 +1,42 @@
+{
+  "requests": [
+    {
+      "id": 1,
+      "plan_name": "Professional",
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "555-1234",
+      "company": "Test Company",
+      "notes": "Test request",
+      "status": "new",
+      "created_date": "2025-06-16T14:34:59.296173",
+      "processed": false
+    },
+    {
+      "id": 2,
+      "plan_name": "Enterprise",
+      "name": "ugur",
+      "email": "ugurakyay@gmail.com",
+      "phone": "05378340837",
+      "company": "",
+      "notes": "",
+      "status": "processed",
+      "created_date": "2025-06-16T15:24:07.061129",
+      "processed": true,
+      "processed_date": "2025-06-16T15:24:48.921920"
+    },
+    {
+      "id": 3,
+      "plan_name": "Enterprise",
+      "name": "ugur",
+      "email": "ugurakyay@gmail.com",
+      "phone": "05378340837",
+      "company": "",
+      "notes": "",
+      "status": "processed",
+      "created_date": "2025-06-16T15:24:26.624057",
+      "processed": true,
+      "processed_date": "2025-06-16T15:27:33.663235"
+    }
+  ]
+}
