@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Execution - TestMate Studio</title>
+    <title>API Health Check - TestMate Studio</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4f46e5;
-            --secondary-color: #ef4444;
+            --secondary-color: #06b6d4;
             --accent-color: #f59e0b;
             --success-color: #10b981;
             --warning-color: #f59e0b;
@@ -69,7 +69,7 @@
             justify-content: center;
             font-size: 2rem;
             margin: 0 auto 1rem;
-            background: linear-gradient(135deg, var(--secondary-color), #dc2626);
+            background: linear-gradient(135deg, var(--secondary-color), #0891b2);
             color: white;
         }
 
@@ -150,7 +150,7 @@
             color: #64748b;
         }
 
-        .test-result {
+        .endpoint-item {
             background: #f8fafc;
             border-radius: 8px;
             padding: 1rem;
@@ -158,19 +158,28 @@
             border-left: 4px solid var(--success-color);
         }
 
-        .test-result.failed {
+        .endpoint-item.failed {
             border-left-color: var(--danger-color);
             background: #fef2f2;
         }
 
-        .test-result.passed {
-            border-left-color: var(--success-color);
-            background: #f0fdf4;
-        }
-
-        .test-result.running {
+        .endpoint-item.warning {
             border-left-color: var(--warning-color);
             background: #fffbeb;
+        }
+
+        .endpoint-method {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            background: #e5e7eb;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
         }
 
         .status-badge {
@@ -180,19 +189,25 @@
             font-weight: 600;
         }
 
-        .status-passed {
+        .status-success {
             background: var(--success-color);
             color: white;
         }
 
-        .status-failed {
+        .status-error {
             background: var(--danger-color);
             color: white;
         }
 
-        .status-running {
+        .status-warning {
             background: var(--warning-color);
             color: white;
+        }
+
+        .json-input {
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            min-height: 200px;
         }
     </style>
 </head>
@@ -225,7 +240,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a></li>
-                    <li class="breadcrumb-item active">Test Execution</li>
+                    <li class="breadcrumb-item active">API Health Check</li>
                 </ol>
             </nav>
         </div>
@@ -234,56 +249,75 @@
             <!-- Page Header -->
             <div class="page-header">
                 <div class="page-icon">
-                    <i class="fas fa-play"></i>
+                    <i class="fas fa-heartbeat"></i>
                 </div>
-                <h1 class="page-title">Test Execution</h1>
-                <p class="page-subtitle">Test kodlarınızı çalıştırın ve sonuçları görün</p>
+                <h1 class="page-title">API Health Check</h1>
+                <p class="page-subtitle">API endpoint'lerinin sağlık durumunu kontrol edin</p>
             </div>
             
-            <!-- Code Input Card -->
+            <!-- JSON Input Card -->
             <div class="form-card">
-                <h4><i class="fas fa-code text-primary me-2"></i>Test Kodu</h4>
-                <p class="text-muted">Çalıştırmak istediğiniz test kodunu buraya yapıştırın.</p>
+                <h4><i class="fas fa-code text-primary me-2"></i>API Endpoint'leri</h4>
+                <p class="text-muted">Kontrol edilecek API endpoint'lerini JSON formatında girin.</p>
                 
                 <div class="mb-3">
-                    <label for="testCode" class="form-label">
-                        <i class="fas fa-file-code text-success me-2"></i>Python Test Kodu
+                    <label for="endpointsJson" class="form-label">
+                        <i class="fas fa-list text-success me-2"></i>Endpoint Listesi (JSON)
                     </label>
-                    <textarea class="form-control" id="testCode" rows="12" 
-                              placeholder="Test kodunuzu buraya yapıştırın..."></textarea>
+                    <textarea class="form-control json-input" id="endpointsJson" rows="12" 
+                              placeholder='[
+  {
+    "name": "User API",
+    "url": "https://api.example.com/users",
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer token123"
+    },
+    "expected_status": 200
+  },
+  {
+    "name": "Login API",
+    "url": "https://api.example.com/login",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "username": "test@example.com",
+      "password": "password123"
+    },
+    "expected_status": 200
+  }
+]'></textarea>
                 </div>
                 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="testType" class="form-label">
-                                <i class="fas fa-layer-group text-warning me-2"></i>Test Türü
+                            <label for="timeout" class="form-label">
+                                <i class="fas fa-clock text-warning me-2"></i>Timeout (saniye)
                             </label>
-                            <select class="form-select" id="testType">
-                                <option value="web">Web Testi</option>
-                                <option value="mobile">Mobil Testi</option>
-                                <option value="api">API Testi</option>
-                            </select>
+                            <input type="number" class="form-control" id="timeout" value="30" min="5" max="300">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="browser" class="form-label">
-                                <i class="fas fa-globe text-info me-2"></i>Tarayıcı (Web Testleri için)
+                            <label for="concurrent" class="form-label">
+                                <i class="fas fa-layer-group text-info me-2"></i>Eşzamanlı İstekler
                             </label>
-                            <select class="form-select" id="browser">
-                                <option value="chrome">Chrome</option>
-                                <option value="firefox">Firefox</option>
-                                <option value="safari">Safari</option>
-                                <option value="edge">Edge</option>
+                            <select class="form-select" id="concurrent">
+                                <option value="1">1 (Sıralı)</option>
+                                <option value="5" selected>5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
                             </select>
                         </div>
                     </div>
                 </div>
                 
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary-modern btn-modern btn-lg" onclick="executeTest()">
-                        <i class="fas fa-play me-2"></i>Testi Çalıştır
+                    <button type="button" class="btn btn-primary-modern btn-modern btn-lg" onclick="checkHealth()">
+                        <i class="fas fa-heartbeat me-2"></i>Sağlık Kontrolü
                     </button>
                 </div>
             </div>
@@ -291,8 +325,8 @@
             <!-- Result Section -->
             <div id="result" class="mt-4" style="display: none;">
                 <div class="form-card">
-                    <h4><i class="fas fa-chart-bar text-primary me-2"></i>Test Sonuçları</h4>
-                    <div id="testResults"></div>
+                    <h4><i class="fas fa-chart-bar text-primary me-2"></i>Kontrol Sonuçları</h4>
+                    <div id="healthResults"></div>
                 </div>
             </div>
             
@@ -302,8 +336,8 @@
                     <div class="spinner-border text-primary mb-3" role="status">
                         <span class="visually-hidden">Yükleniyor...</span>
                     </div>
-                    <h5>Test çalıştırılıyor...</h5>
-                    <p class="text-muted">Bu işlem birkaç dakika sürebilir</p>
+                    <h5>API endpoint'leri kontrol ediliyor...</h5>
+                    <p class="text-muted">Bu işlem birkaç saniye sürebilir</p>
                 </div>
             </div>
         </div>
@@ -311,13 +345,26 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        async function executeTest() {
-            const testCode = document.getElementById('testCode').value.trim();
-            const testType = document.getElementById('testType').value;
-            const browser = document.getElementById('browser').value;
+        async function checkHealth() {
+            const endpointsJson = document.getElementById('endpointsJson').value.trim();
+            const timeout = parseInt(document.getElementById('timeout').value);
+            const concurrent = parseInt(document.getElementById('concurrent').value);
             
-            if (!testCode) {
-                alert('Lütfen test kodunu girin!');
+            if (!endpointsJson) {
+                alert('Lütfen endpoint listesini girin!');
+                return;
+            }
+            
+            let endpoints;
+            try {
+                endpoints = JSON.parse(endpointsJson);
+            } catch (error) {
+                alert('Geçersiz JSON formatı!');
+                return;
+            }
+            
+            if (!Array.isArray(endpoints) || endpoints.length === 0) {
+                alert('En az bir endpoint gerekli!');
                 return;
             }
             
@@ -325,15 +372,15 @@
             document.getElementById('result').style.display = 'none';
             
             try {
-                const response = await fetch('/api/execute-tests', {
+                const response = await fetch('/api/health-check', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        test_code: testCode,
-                        test_type: testType,
-                        browser: browser
+                        endpoints: endpoints,
+                        timeout: timeout,
+                        concurrent: concurrent
                     })
                 });
                 
@@ -353,44 +400,94 @@
         }
         
         function displayResults(data) {
-            const resultsDiv = document.getElementById('testResults');
+            const resultsDiv = document.getElementById('healthResults');
             resultsDiv.innerHTML = '';
             
+            // Summary
+            if (data.summary) {
+                const summaryDiv = document.createElement('div');
+                summaryDiv.className = 'mb-4';
+                summaryDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-success">${data.summary.success_count || 0}</h3>
+                                <small>Başarılı</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-danger">${data.summary.failed_count || 0}</h3>
+                                <small>Başarısız</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-warning">${data.summary.warning_count || 0}</h3>
+                                <small>Uyarı</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="text-center">
+                                <h3 class="text-info">${data.summary.total_count || 0}</h3>
+                                <small>Toplam</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultsDiv.appendChild(summaryDiv);
+            }
+            
+            // Individual Results
             if (data.results && data.results.length > 0) {
                 data.results.forEach((result, index) => {
                     const resultDiv = document.createElement('div');
-                    resultDiv.className = `test-result ${result.status.toLowerCase()}`;
+                    const statusClass = result.status === 'success' ? '' : 
+                                      result.status === 'error' ? 'failed' : 'warning';
+                    const statusBadgeClass = result.status === 'success' ? 'status-success' : 
+                                           result.status === 'error' ? 'status-error' : 'status-warning';
                     
-                    const statusClass = result.status === 'PASSED' ? 'status-passed' : 
-                                      result.status === 'FAILED' ? 'status-failed' : 'status-running';
-                    
+                    resultDiv.className = `endpoint-item ${statusClass}`;
                     resultDiv.innerHTML = `
                         <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="mb-1">Test ${index + 1}</h6>
-                                <p class="mb-1">${result.name || 'İsimsiz Test'}</p>
-                                <small class="text-muted">${result.duration || '0'} saniye</small>
+                            <div class="flex-grow-1">
+                                <div class="endpoint-method">
+                                    ${result.method || 'GET'} - ${result.name || `Endpoint ${index + 1}`}
+                                </div>
+                                <div class="endpoint-url mb-2">${result.url || 'N/A'}</div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <small><strong>Durum Kodu:</strong> ${result.status_code || 'N/A'}</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small><strong>Yanıt Süresi:</strong> ${result.response_time || 'N/A'}ms</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <small><strong>Beklenen:</strong> ${result.expected_status || 'Any'}</small>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <span class="status-badge ${statusBadgeClass}">${result.status || 'Unknown'}</span>
+                                    </div>
+                                </div>
+                                ${result.error ? `<p class="mt-2 mb-0 text-danger"><small>${result.error}</small></p>` : ''}
+                                ${result.response_size ? `<p class="mt-1 mb-0 text-muted"><small>Yanıt Boyutu: ${result.response_size} bytes</small></p>` : ''}
                             </div>
-                            <span class="status-badge ${statusClass}">${result.status}</span>
                         </div>
-                        ${result.message ? `<p class="mt-2 mb-0">${result.message}</p>` : ''}
-                        ${result.error ? `<p class="mt-2 mb-0 text-danger"><small>${result.error}</small></p>` : ''}
                     `;
-                    
                     resultsDiv.appendChild(resultDiv);
                 });
             } else {
                 resultsDiv.innerHTML = `
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle me-2"></i>
-                        Test sonucu bulunamadı.
+                        Kontrol sonucu bulunamadı.
                     </div>
                 `;
             }
         }
         
         // Auto-resize textarea
-        document.getElementById('testCode').addEventListener('input', function() {
+        document.getElementById('endpointsJson').addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = this.scrollHeight + 'px';
         });

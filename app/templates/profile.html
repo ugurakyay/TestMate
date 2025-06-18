@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Profil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .profile-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 1rem;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+        .profile-content {
+            padding: 2rem;
+        }
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #667eea;
+        }
+        .license-card {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .license-expiry {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .days-remaining {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .edit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        .back-btn {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #5a6268;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>{{ user.full_name or user.email }}</h2>
+                <p class="mb-0">{{ user.license_type|title }} Plan</p>
+            </div>
+            
+            <div class="profile-content">
+                <!-- Kullanıcı Bilgileri -->
+                <div class="info-card">
+                    <h5><i class="fas fa-user me-2"></i>Kullanıcı Bilgileri</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Ad Soyad:</strong> {{ user.full_name or 'Belirtilmemiş' }}</p>
+                            <p><strong>E-posta:</strong> {{ user.email }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Hesap Türü:</strong> {{ user.role|title }}</p>
+                            <p><strong>Kayıt Tarihi:</strong> {{ user.created_at or 'Belirtilmemiş' }}</p>
+                        </div>
+                    </div>
+                    <button class="edit-btn" onclick="editProfile()">
+                        <i class="fas fa-edit me-1"></i>Profili Düzenle
+                    </button>
+                </div>
+                
+                <!-- Lisans Bilgileri -->
+                <div class="license-card">
+                    <h5><i class="fas fa-key me-2"></i>Lisans Bilgileri</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Lisans Türü:</strong> {{ user.license_type|title }}</p>
+                            <p><strong>Lisans Anahtarı:</strong> {{ user.license_key }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Başlangıç:</strong> {{ user.created_at or 'Belirtilmemiş' }}</p>
+                            <p><strong>Bitiş Tarihi:</strong> {{ user.expiry_date or 'Belirtilmemiş' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="license-expiry">
+                        <div class="days-remaining" id="daysRemaining">--</div>
+                        <div>Gün Kaldı</div>
+                    </div>
+                </div>
+                
+                <!-- Kullanım İstatistikleri -->
+                <div class="info-card">
+                    <h5><i class="fas fa-chart-bar me-2"></i>Kullanım İstatistikleri</h5>
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <h4 class="text-primary">{{ workspace_stats.projects or 0 }}</h4>
+                            <p class="text-muted">Proje</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h4 class="text-success">{{ workspace_stats.file_count or 0 }}</h4>
+                            <p class="text-muted">Test Dosyası</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h4 class="text-warning">{{ experience_stats.created_patterns or 0 }}</h4>
+                            <p class="text-muted">Deneyim Paylaşımı</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h4 class="text-info">{{ "%.1f"|format(experience_stats.success_rate or 0) }}%</h4>
+                            <p class="text-muted">Başarı Oranı</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aksiyonlar -->
+                <div class="text-center">
+                    <a href="/" class="back-btn me-2">
+                        <i class="fas fa-home me-1"></i>Ana Sayfa
+                    </a>
+                    <a href="/dashboard" class="back-btn me-2">
+                        <i class="fas fa-arrow-left me-1"></i>Dashboard'a Dön
+                    </a>
+                    <a href="/license" class="edit-btn me-2">
+                        <i class="fas fa-key me-1"></i>Lisans Yönetimi
+                    </a>
+                    <button class="edit-btn" onclick="logout()" style="background: #dc3545;">
+                        <i class="fas fa-sign-out-alt me-1"></i>Çıkış Yap
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Kalan gün hesaplama
+        function calculateDaysRemaining() {
+            const expiryDate = new Date('{{ user.expiry_date }}');
+            const today = new Date();
+            const diffTime = expiryDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 0) {
+                document.getElementById('daysRemaining').textContent = diffDays;
+                document.getElementById('daysRemaining').style.color = '#28a745';
+            } else if (diffDays === 0) {
+                document.getElementById('daysRemaining').textContent = 'Bugün';
+                document.getElementById('daysRemaining').style.color = '#ffc107';
+            } else {
+                document.getElementById('daysRemaining').textContent = 'Süresi Dolmuş';
+                document.getElementById('daysRemaining').style.color = '#dc3545';
+            }
+        }
+        
+        function editProfile() {
+            alert('Profil düzenleme özelliği yakında eklenecek!');
+        }
+        
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        // Sayfa yüklendiğinde kalan günleri hesapla
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateDaysRemaining();
+        });
+    </script>
+</body>
+</html> 

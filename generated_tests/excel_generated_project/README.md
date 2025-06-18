@@ -6,7 +6,7 @@ Bu proje, AI Test Tool tarafından otomatik olarak oluşturulmuştur.
 
 - **Framework**: SELENIUM
 - **Test Sayısı**: 1
-- **Oluşturulma Tarihi**: 2025-06-16 17:13:08
+- **Oluşturulma Tarihi**: 2025-06-16 19:49:45
 
 ## Kurulum
 

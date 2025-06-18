@@ -78,25 +78,29 @@ class LicenseManager:
         return email == stored_email and password == stored_password
     
     def create_trial_license(self, email: str) -> Dict[str, Any]:
-        """Trial lisans oluştur"""
+        """Trial lisans oluştur - Her fonksiyon için 1 defa kullanım hakkı"""
         data = self._load_data()
         
         # E-posta kontrolü
         if email in data["users"]:
             return {"success": False, "error": "Bu e-posta adresi zaten kayıtlı"}
         
-        # Trial lisans oluştur
+        # Trial lisans oluştur - Her fonksiyon için 1 kullanım hakkı
         trial_license = {
             "email": email,
             "license_type": "trial",
             "status": "active",
             "created_date": datetime.now().isoformat(),
-            "expiry_date": (datetime.now() + timedelta(days=7)).isoformat(),
+            "expiry_date": (datetime.now() + timedelta(days=365)).isoformat(),  # 1 yıl geçerli
             "usage": {
-                "test_generation": 0,
-                "locator_analysis": 0,
-                "excel_processing": 0
-            }
+                "test_generation": 1,  # 1 kullanım hakkı
+                "locator_analysis": 1,  # 1 kullanım hakkı
+                "excel_processing": 1,  # 1 kullanım hakkı
+                "test_execution": 1,    # 1 kullanım hakkı
+                "website_analyzer": 1,  # 1 kullanım hakkı
+                "api_health_check": 1   # 1 kullanım hakkı
+            },
+            "trial_used": False
         }
         
         data["users"][email] = trial_license
@@ -109,7 +113,7 @@ class LicenseManager:
         return {
             "success": True,
             "license": trial_license,
-            "message": "Trial lisans başarıyla oluşturuldu"
+            "message": "Trial lisans başarıyla oluşturuldu. Her fonksiyon için 1 kullanım hakkınız var."
         }
     
     def generate_trial_license(self, email: str) -> Dict[str, Any]:
@@ -184,34 +188,64 @@ class LicenseManager:
         return {
             "plans": [
                 {
+                    "name": "Trial",
+                    "price": 0,
+                    "period": "Her fonksiyon için 1 kullanım",
+                    "features": [
+                        "AI Test Generation - 1 kullanım",
+                        "Locator Analysis - 1 kullanım", 
+                        "Excel Integration - 1 kullanım",
+                        "Test Execution - 1 kullanım",
+                        "Website Analyzer - 1 kullanım",
+                        "API Health Check - 1 kullanım"
+                    ],
+                    "highlight": False
+                },
+                {
                     "name": "Basic",
                     "price": 29,
+                    "period": "aylık",
                     "features": [
-                        "Temel test generation",
-                        "Basit locator analysis",
+                        "Sınırsız AI Test Generation",
+                        "Sınırsız Locator Analysis",
+                        "Sınırsız Excel Integration",
+                        "Sınırsız Test Execution",
+                        "Sınırsız Website Analyzer",
+                        "Sınırsız API Health Check",
                         "5 proje limiti",
                         "Email desteği"
-                    ]
+                    ],
+                    "highlight": False
                 },
                 {
                     "name": "Professional",
                     "price": 99,
+                    "period": "aylık",
                     "features": [
+                        "Tüm Basic özellikleri",
                         "Gelişmiş AI özellikleri",
                         "Priority support",
                         "25 proje limiti",
-                        "API access"
-                    ]
+                        "API access",
+                        "Detaylı raporlar",
+                        "Takım yönetimi"
+                    ],
+                    "highlight": True
                 },
                 {
                     "name": "Enterprise",
                     "price": 299,
+                    "period": "aylık",
                     "features": [
+                        "Tüm Professional özellikleri",
                         "Özel entegrasyonlar",
                         "Dedicated support",
                         "Sınırsız proje",
-                        "White-label seçeneği"
-                    ]
+                        "White-label seçeneği",
+                        "Özel eğitim",
+                        "SLA garantisi"
+                    ],
+                    "highlight": False
                 }
             ]
         }
@@ -293,8 +327,15 @@ class LicenseManager:
         license_type = user_data.get("license_type", "trial")
         
         if license_type == "trial":
-            # Trial kullanıcıları tüm özelliklere erişebilir (limitli)
-            return True
+            # Trial kullanıcıları için kullanım limitini kontrol et
+            usage = user_data.get("usage", {})
+            feature_usage = usage.get(feature, 0)
+            
+            # Eğer kullanım hakkı kalmışsa erişim ver
+            if feature_usage > 0:
+                return True
+            else:
+                return False
         elif license_type in ["basic", "professional", "enterprise"]:
             # Tüm özelliklere erişim
             return True
@@ -311,7 +352,7 @@ class LicenseManager:
         }
     
     def increment_usage(self, email: str, feature: str):
-        """Kullanım sayısını artır"""
+        """Kullanım sayısını artır - Trial kullanıcılar için kalan hakkı azalt"""
         data = self._load_data()
         
         if email in data["users"]:
@@ -321,7 +362,14 @@ class LicenseManager:
             if feature not in data["users"][email]["usage"]:
                 data["users"][email]["usage"][feature] = 0
             
-            data["users"][email]["usage"][feature] += 1
+            # Trial kullanıcılar için kalan hakkı azalt
+            if data["users"][email].get("license_type") == "trial":
+                if data["users"][email]["usage"][feature] > 0:
+                    data["users"][email]["usage"][feature] -= 1
+            else:
+                # Normal kullanıcılar için kullanım sayısını artır
+                data["users"][email]["usage"][feature] += 1
+            
             self._save_data(data)
 
     def get_user_info(self, email: str) -> Optional[Dict[str, Any]]:
@@ -472,4 +520,13 @@ TestMate Studio Ekibi
             data["dev_usage"][feature] = 0
         
         data["dev_usage"][feature] += 1
-        self._save_data(data) 
+        self._save_data(data)
+
+    def check_premium_access(self, feature: str) -> Dict[str, Any]:
+        """Premium özellik erişim kontrolü"""
+        # Şimdilik tüm premium özelliklere erişim ver (geliştirme aşamasında)
+        return {
+            "access": True,
+            "feature": feature,
+            "message": "Premium feature access granted"
+        } 

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Locator Analysis - TestMate Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .navbar-modern {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--secondary-color), #0891b2);
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .example-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .locator-type {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .locator-type h5 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), #0891b2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-robot text-primary me-2"></i>
+                TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-arrow-left me-1"></i>Dashboard'a Dön
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Feature Header -->
+            <div class="feature-header">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h1 class="feature-title">Smart Locator Analysis</h1>
+                <p class="feature-subtitle">HTML içeriğinden akıllı locator analizi ile en uygun element seçicilerini bulun</p>
+                <a href="/analyze" class="btn btn-primary-modern btn-modern btn-lg">
+                    <i class="fas fa-play me-2"></i>Hemen Başla
+                </a>
+            </div>
+
+            <!-- Overview -->
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle text-primary me-2"></i>Genel Bakış</h3>
+                <p class="lead">
+                    Smart Locator Analysis, HTML sayfa kaynak kodunu analiz ederek en uygun ve güvenilir locator'ları 
+                    otomatik olarak bulmanızı sağlar. Yapay zeka algoritmaları ile element açıklamanızdan en iyi seçicileri önerir.
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-brain fa-2x text-primary mb-2"></i>
+                            <h5>AI Analizi</h5>
+                            <p>Yapay zeka ile akıllı locator önerileri</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <h5>Güvenilir Seçiciler</h5>
+                            <p>En stabil ve güvenilir locator'ları bulun</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-bolt fa-2x text-warning mb-2"></i>
+                            <h5>Hızlı Analiz</h5>
+                            <p>Saniyeler içinde sonuç alın</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="info-card">
+                <h3><i class="fas fa-cogs text-primary me-2"></i>Nasıl Çalışır?</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h5>HTML Kaynağını Yapıştırın</h5>
+                                <p>Analiz etmek istediğiniz sayfanın HTML kodunu yapıştırın</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h5>Element Açıklayın</h5>
+                                <p>Bulmak istediğiniz elementi doğal dil ile açıklayın</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h5>AI Analizi</h5>
+                                <p>Yapay zeka HTML'i analiz eder ve en uygun locator'ları bulur</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">4</div>
+                            <div>
+                                <h5>Sonuçları Alın</h5>
+                                <p>Önerilen locator'ları test kodlarınızda kullanın</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locator Types -->
+            <div class="info-card">
+                <h3><i class="fas fa-layer-group text-primary me-2"></i>Desteklenen Locator Türleri</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="locator-type">
+                            <h5><i class="fas fa-id-card text-primary me-2"></i>ID</h5>
+                            <p>En hızlı ve güvenilir seçici. Benzersiz ID'ler için idealdir.</p>
+                            <code>driver.find_element(By.ID, "login-button")</code>
+                        </div>
+                        <div class="locator-type">
+                            <h5><i class="fas fa-tag text-success me-2"></i>CSS Selector</h5>
+                            <p>Güçlü ve esnek seçici. Karmaşık elementler için kullanılır.</p>
+                            <code>driver.find_element(By.CSS_SELECTOR, ".btn-primary")</code>
+                        </div>
+                        <div class="locator-type">
+                            <h5><i class="fas fa-code text-warning me-2"></i>XPath</h5>
+                            <p>En esnek seçici. Dinamik içerikler için idealdir.</p>
+                            <code>driver.find_element(By.XPATH, "//button[contains(text(), 'Login')]")</code>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="locator-type">
+                            <h5><i class="fas fa-font text-info me-2"></i>Name</h5>
+                            <p>Form elementleri için yaygın kullanılan seçici.</p>
+                            <code>driver.find_element(By.NAME, "username")</code>
+                        </div>
+                        <div class="locator-type">
+                            <h5><i class="fas fa-list text-danger me-2"></i>Class Name</h5>
+                            <p>CSS sınıfları için basit seçici.</p>
+                            <code>driver.find_element(By.CLASS_NAME, "submit-btn")</code>
+                        </div>
+                        <div class="locator-type">
+                            <h5><i class="fas fa-link text-secondary me-2"></i>Link Text</h5>
+                            <p>Link elementleri için özel seçici.</p>
+                            <code>driver.find_element(By.LINK_TEXT, "Click here")</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples -->
+            <div class="info-card">
+                <h3><i class="fas fa-lightbulb text-primary me-2"></i>Örnekler</h3>
+                
+                <!-- Login Form Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-sign-in-alt text-primary me-2"></i>Giriş Formu Örneği</h4>
+                    <p><strong>Element Açıklaması:</strong> "Kullanıcı adı giriş alanı"</p>
+                    <div class="code-block">
+                        <pre><code class="language-html">&lt;form class="login-form"&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label for="username"&gt;Kullanıcı Adı:&lt;/label&gt;
+        &lt;input type="text" id="username" name="username" class="form-control" placeholder="Kullanıcı adınızı girin"&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+        &lt;label for="password"&gt;Şifre:&lt;/label&gt;
+        &lt;input type="password" id="password" name="password" class="form-control"&gt;
+    &lt;/div&gt;
+    &lt;button type="submit" class="btn btn-primary"&gt;Giriş Yap&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+                    </div>
+                    <h5>Önerilen Locator'lar:</h5>
+                    <ul>
+                        <li><strong>ID:</strong> <code>By.ID, "username"</code> ⭐ En iyi seçenek</li>
+                        <li><strong>Name:</strong> <code>By.NAME, "username"</code> ⭐ Güvenilir</li>
+                        <li><strong>CSS:</strong> <code>By.CSS_SELECTOR, "input[name='username']"</code> ⭐ Alternatif</li>
+                    </ul>
+                </div>
+
+                <!-- Navigation Menu Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-bars text-success me-2"></i>Navigasyon Menüsü Örneği</h4>
+                    <p><strong>Element Açıklaması:</strong> "Ana sayfa linki"</p>
+                    <div class="code-block">
+                        <pre><code class="language-html">&lt;nav class="navbar navbar-expand-lg"&gt;
+    &lt;div class="navbar-nav"&gt;
+        &lt;a class="nav-link active" href="/"&gt;Ana Sayfa&lt;/a&gt;
+        &lt;a class="nav-link" href="/products"&gt;Ürünler&lt;/a&gt;
+        &lt;a class="nav-link" href="/about"&gt;Hakkımızda&lt;/a&gt;
+        &lt;a class="nav-link" href="/contact"&gt;İletişim&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;</code></pre>
+                    </div>
+                    <h5>Önerilen Locator'lar:</h5>
+                    <ul>
+                        <li><strong>Link Text:</strong> <code>By.LINK_TEXT, "Ana Sayfa"</code> ⭐ En iyi seçenek</li>
+                        <li><strong>XPath:</strong> <code>By.XPATH, "//a[text()='Ana Sayfa']"</code> ⭐ Güvenilir</li>
+                        <li><strong>CSS:</strong> <code>By.CSS_SELECTOR, "a[href='/']"</code> ⭐ Alternatif</li>
+                    </ul>
+                </div>
+
+                <!-- Dynamic Content Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-sync text-warning me-2"></i>Dinamik İçerik Örneği</h4>
+                    <p><strong>Element Açıklaması:</strong> "Ürün fiyatı gösteren element"</p>
+                    <div class="code-block">
+                        <pre><code class="language-html">&lt;div class="product-card"&gt;
+    &lt;h3 class="product-title"&gt;iPhone 15 Pro&lt;/h3&gt;
+    &lt;div class="product-price" data-product-id="iphone15pro"&gt;
+        &lt;span class="price-amount"&gt;₺45.999&lt;/span&gt;
+        &lt;span class="price-currency"&gt;TL&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;button class="add-to-cart-btn" onclick="addToCart('iphone15pro')"&gt;
+        Sepete Ekle
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                    <h5>Önerilen Locator'lar:</h5>
+                    <ul>
+                        <li><strong>XPath:</strong> <code>By.XPATH, "//div[@data-product-id='iphone15pro']//span[@class='price-amount']"</code> ⭐ En iyi seçenek</li>
+                        <li><strong>CSS:</strong> <code>By.CSS_SELECTOR, "[data-product-id='iphone15pro'] .price-amount"</code> ⭐ Güvenilir</li>
+                        <li><strong>XPath:</strong> <code>By.XPATH, "//span[contains(@class, 'price-amount')]"</code> ⭐ Alternatif</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Best Practices -->
+            <div class="info-card">
+                <h3><i class="fas fa-star text-warning me-2"></i>En İyi Uygulamalar</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-check-circle text-success me-2"></i>Önerilen Yaklaşımlar</h5>
+                        <ul>
+                            <li><strong>ID kullanın:</strong> Benzersiz ID'ler en hızlı ve güvenilir seçicilerdir</li>
+                            <li><strong>CSS Selector tercih edin:</strong> XPath'tan daha hızlı çalışır</li>
+                            <li><strong>Semantik seçiciler:</strong> Anlamlı class ve attribute'ları kullanın</li>
+                            <li><strong>Kısa ve net:</strong> Mümkün olduğunca kısa locator'lar yazın</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-times-circle text-danger me-2"></i>Kaçınılması Gerekenler</h5>
+                        <ul>
+                            <li><strong>Dinamik ID'ler:</strong> Sayfa yenilendiğinde değişen ID'lerden kaçının</li>
+                            <li><strong>Çok uzun XPath:</strong> Karmaşık ve yavaş çalışan XPath'lar</li>
+                            <li><strong>Index kullanımı:</strong> Sıra numarasına dayalı seçiciler</li>
+                            <li><strong>Text içeren seçiciler:</strong> Çeviri değişikliklerinde kırılabilir</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="info-card">
+                <h3><i class="fas fa-chart-line text-success me-2"></i>Avantajlar</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-rocket text-primary me-2"></i>
+                                <strong>Hızlı Geliştirme:</strong> Locator bulma süresini %90 azaltın
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-shield-alt text-success me-2"></i>
+                                <strong>Güvenilir Testler:</strong> En stabil locator'ları otomatik bulun
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-brain text-info me-2"></i>
+                                <strong>AI Önerileri:</strong> Yapay zeka ile en uygun seçicileri öğrenin
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-users text-warning me-2"></i>
+                                <strong>Takım Verimliliği:</strong> Locator bulma sürecini standartlaştırın
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-bug text-danger me-2"></i>
+                                <strong>Hata Azaltma:</strong> Yanlış locator'lardan kaynaklanan hataları önleyin
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-clock text-secondary me-2"></i>
+                                <strong>Zaman Tasarrufu:</strong> Test bakım süresini önemli ölçüde azaltın
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center">
+                <h3>Hemen Locator Analizine Başlayın</h3>
+                <p class="lead mb-4">Yapay zeka destekli locator analizi ile test otomasyonunuzu güçlendirin</p>
+                <a href="/analyze" class="btn btn-primary-modern btn-modern btn-lg me-3">
+                    <i class="fas fa-search me-2"></i>Locator Analizi
+                </a>
+                <a href="/" class="btn btn-outline-primary btn-modern btn-lg">
+                    <i class="fas fa-home me-2"></i>Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html> 

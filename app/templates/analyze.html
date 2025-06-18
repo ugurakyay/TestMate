@@ -3,68 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TestMate Studio - Locator Analizi</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Locator Analysis - TestMate Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+        }
+
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
             min-height: 100vh;
+            color: var(--dark-color);
         }
-        .main-content {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+
+        .navbar-modern {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
         }
+
         .navbar-brand {
-            font-weight: bold;
+            color: var(--primary-color) !important;
+            font-weight: 800;
             font-size: 1.5rem;
         }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+
+        .navbar-nav .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
         }
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
         }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
         .result-box {
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: #1e293b;
+            border-radius: 12px;
             padding: 1.5rem;
             margin: 1rem 0;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--success-color);
         }
-        .locator-code {
-            background: #e9ecef;
-            padding: 0.5rem;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            word-break: break-all;
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
         }
-        .selenium-code {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            padding: 0.5rem;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            color: #495057;
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
-        .confidence-badge {
-            font-size: 0.8rem;
+
+        .breadcrumb-nav {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item.active {
+            color: #64748b;
+        }
+
+        .locator-item {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .locator-type {
+            font-weight: 600;
+            color: var(--primary-color);
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-robot me-2"></i>TestMate Studio
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-robot text-primary me-2"></i>
+                TestMate Studio
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -72,22 +178,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/generate">Test Oluştur</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/analyze">Locator Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/excel">Excel İşleme</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/execute">Test Çalıştır</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/license">Lisans</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin</a>
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-arrow-left me-1"></i>Dashboard'a Dön
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -95,63 +188,97 @@
     </nav>
 
     <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb-nav">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home me-1"></i>Ana Sayfa</a></li>
+                    <li class="breadcrumb-item active">Locator Analysis</li>
+                </ol>
+            </nav>
+        </div>
+
         <div class="main-content">
-            <h2 class="text-center mb-4">
-                <i class="fas fa-search me-2"></i>Locator Analizi
-            </h2>
-            
-            <form id="analyzeForm">
-                <div class="mb-3">
-                    <label for="htmlContent" class="form-label">HTML İçeriği</label>
-                    <textarea class="form-control" id="htmlContent" rows="8" 
-                              placeholder="Analiz etmek istediğiniz HTML kodunu buraya yapıştırın..." required></textarea>
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="page-icon">
+                    <i class="fas fa-search"></i>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="elementDescription" class="form-label">Element Açıklaması</label>
-                    <input type="text" class="form-control" id="elementDescription" 
-                           placeholder="Örnek: Login butonu, Email input alanı, vs." required>
-                </div>
-                
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-search me-2"></i>Analiz Et
-                    </button>
-                </div>
-            </form>
-            
-            <div class="alert alert-info mt-4">
-                <h6><i class="fas fa-info-circle me-2"></i>Kullanım İpuçları:</h6>
-                <ul class="mb-0">
-                    <li><strong>HTML İçeriği:</strong> Sayfanın kaynak kodunu (Ctrl+U ile görüntüleyebilirsiniz) kopyalayıp yapıştırın</li>
-                    <li><strong>Element Açıklaması:</strong> Bulmak istediğiniz elementi açıklayın (örn: "Login butonu", "Email input alanı")</li>
-                    <li><strong>Sonuçlar:</strong> Sistem size en uygun locator'ları güvenilirlik sırasına göre sunacak</li>
-                    <li><strong>Kopyalama:</strong> Locator'ı veya Selenium kodunu tek tıkla kopyalayabilirsiniz</li>
-                </ul>
+                <h1 class="page-title">Locator Analysis</h1>
+                <p class="page-subtitle">HTML içeriğinden akıllı locator analizi yapın</p>
             </div>
             
+            <!-- Form Card -->
+            <div class="form-card">
+                <form id="locatorForm">
+                    <div class="mb-3">
+                        <label for="htmlSource" class="form-label">
+                            <i class="fas fa-code text-primary me-2"></i>HTML Kaynak Kodu
+                        </label>
+                        <textarea class="form-control" id="htmlSource" rows="8" 
+                                  placeholder="HTML kaynak kodunu buraya yapıştırın..." required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="elementDescription" class="form-label">
+                            <i class="fas fa-edit text-success me-2"></i>Element Açıklaması
+                        </label>
+                        <input type="text" class="form-control" id="elementDescription" 
+                               placeholder="Örnek: Login butonu, kullanıcı adı alanı, arama kutusu..." required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="preferredLocator" class="form-label">
+                            <i class="fas fa-star text-warning me-2"></i>Tercih Edilen Locator Türü (Opsiyonel)
+                        </label>
+                        <select class="form-select" id="preferredLocator">
+                            <option value="">Otomatik Seçim</option>
+                            <option value="id">ID</option>
+                            <option value="css">CSS Selector</option>
+                            <option value="xpath">XPath</option>
+                            <option value="name">Name</option>
+                            <option value="class">Class Name</option>
+                        </select>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary-modern btn-modern btn-lg">
+                            <i class="fas fa-search me-2"></i>Locator Analizi
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Result Section -->
             <div id="result" class="mt-4" style="display: none;">
-                <h4><i class="fas fa-lightbulb me-2"></i>Önerilen Locator'lar</h4>
-                <div id="locatorResults"></div>
+                <div class="form-card">
+                    <h4><i class="fas fa-list text-primary me-2"></i>Önerilen Locator'lar</h4>
+                    <div id="locatorResults"></div>
+                </div>
             </div>
             
+            <!-- Loading Section -->
             <div id="loading" class="text-center mt-4" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Yükleniyor...</span>
+                <div class="form-card">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <h5>Locator analizi yapılıyor...</h5>
+                    <p class="text-muted">AI en uygun locator'ları buluyor</p>
                 </div>
-                <p class="mt-2">HTML içeriği analiz ediliyor...</p>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+        document.getElementById('locatorForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = {
-                page_source: document.getElementById('htmlContent').value,
-                element_description: document.getElementById('elementDescription').value
+                page_source: document.getElementById('htmlSource').value,
+                element_description: document.getElementById('elementDescription').value,
+                preferred_locator_type: document.getElementById('preferredLocator').value
             };
             
             document.getElementById('loading').style.display = 'block';
@@ -169,111 +296,45 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    displayLocatorResults(data.locators);
+                    displayResults(data.locators);
                     document.getElementById('result').style.display = 'block';
-                    
-                    // Show success message
-                    if (data.locators && data.locators.length > 0) {
-                        showAlert('success', `Başarıyla ${data.locators.length} locator bulundu!`);
-                    } else {
-                        showAlert('warning', 'Hiç locator bulunamadı. HTML içeriğini kontrol edin.');
-                    }
                 } else {
-                    showAlert('danger', `Hata: ${data.detail || 'Bilinmeyen hata'}`);
+                    alert('Hata: ' + data.detail);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                showAlert('danger', `Bağlantı hatası: ${error.message}`);
+                alert('Bir hata oluştu: ' + error.message);
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
         });
         
-        function displayLocatorResults(locators) {
-            const container = document.getElementById('locatorResults');
-            container.innerHTML = '';
-            
-            if (!locators || locators.length === 0) {
-                container.innerHTML = '<div class="alert alert-warning">Hiç locator bulunamadı.</div>';
-                return;
-            }
+        function displayResults(locators) {
+            const resultsDiv = document.getElementById('locatorResults');
+            resultsDiv.innerHTML = '';
             
             locators.forEach((locator, index) => {
-                const locatorCard = document.createElement('div');
-                locatorCard.className = 'result-box mb-3';
-                
-                // Convert confidence to reliability percentage
-                const reliability = getReliabilityFromConfidence(locator.confidence);
-                const reliabilityColor = getReliabilityColor(reliability);
-                
-                locatorCard.innerHTML = `
-                    <h6><i class="fas fa-tag me-2"></i>${locator.type || 'Unknown'}</h6>
-                    <p><strong>Locator:</strong></p>
-                    <div class="locator-code">${locator.value || locator.locator || 'N/A'}</div>
-                    <p class="mt-2"><strong>Güvenilirlik:</strong> 
-                        <span class="badge bg-${reliabilityColor} confidence-badge">${reliability}%</span>
-                        <small class="text-muted ms-2">(${locator.confidence || 'Unknown'})</small>
-                    </p>
-                    <p><strong>Açıklama:</strong> ${locator.reasoning || locator.description || 'Açıklama bulunmuyor'}</p>
-                    ${locator.selenium_code ? `<p><strong>Selenium Kodu:</strong></p><div class="selenium-code">${locator.selenium_code}</div>` : ''}
-                    <div class="mt-3">
-                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('${locator.value || locator.locator || ''}')">
-                            <i class="fas fa-copy me-1"></i>Locator'ı Kopyala
+                const locatorDiv = document.createElement('div');
+                locatorDiv.className = 'locator-item';
+                locatorDiv.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="locator-type">${locator.type.toUpperCase()}</span>
+                            <code class="ms-2">${locator.selector}</code>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('${locator.selector}')">
+                            <i class="fas fa-copy"></i>
                         </button>
-                        ${locator.selenium_code ? `<button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('${locator.selenium_code}')">
-                            <i class="fas fa-code me-1"></i>Selenium Kodunu Kopyala
-                        </button>` : ''}
                     </div>
+                    <p class="mt-2 mb-0 text-muted">${locator.explanation}</p>
                 `;
-                container.appendChild(locatorCard);
+                resultsDiv.appendChild(locatorDiv);
             });
-        }
-        
-        function getReliabilityFromConfidence(confidence) {
-            if (!confidence) return 50;
-            switch (confidence.toLowerCase()) {
-                case 'high': return 90;
-                case 'medium': return 70;
-                case 'low': return 30;
-                default: return 50;
-            }
-        }
-        
-        function getReliabilityColor(reliability) {
-            if (reliability >= 80) return 'success';
-            if (reliability >= 60) return 'warning';
-            return 'danger';
         }
         
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                showAlert('success', 'Locator panoya kopyalandı!');
+                alert('Locator panoya kopyalandı!');
             });
-        }
-        
-        function showAlert(type, message) {
-            // Remove existing alerts
-            const existingAlerts = document.querySelectorAll('.alert-dismissible');
-            existingAlerts.forEach(alert => alert.remove());
-            
-            // Create new alert
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-            alertDiv.innerHTML = `
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            
-            // Insert at the top of main content
-            const mainContent = document.querySelector('.main-content');
-            mainContent.insertBefore(alertDiv, mainContent.firstChild);
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                if (alertDiv.parentNode) {
-                    alertDiv.remove();
-                }
-            }, 5000);
         }
     </script>
 </body>

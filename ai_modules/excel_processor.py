@@ -45,11 +45,11 @@ class ExcelProcessor:
         # Örnek veri ekle
         example_data = [
             ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 1, "Tarayıcıyı aç", "", "", "Aç", "https://example.com", "Sayfa yüklendi", "", ""],
-            ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 2, "Email alanına tıkla", "id", "email-input", "Tıkla", "", "Email alanı aktif", "", ""],
-            ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 3, "Email adresini gir", "id", "email-input", "Yaz", "test@example.com", "Email girildi", "", ""],
-            ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 4, "Şifre alanına tıkla", "id", "password-input", "Tıkla", "", "Şifre alanı aktif", "", ""],
-            ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 5, "Şifreyi gir", "id", "password-input", "Yaz", "123456", "Şifre girildi", "", ""],
-            ["TC001", "Kullanıcı Girişi", "Kullanıcının email ve şifre ile giriş yapabilmesi", "Yüksek", "Web", 6, "Giriş butonuna tıkla", "id", "login-btn", "Tıkla", "", "Giriş yapıldı", "", ""],
+            ["TC002", "Email Girişi", "Email alanına geçerli email adresi girilmesi", "Yüksek", "Web", 1, "Email alanına tıkla", "id", "email-input", "Tıkla", "", "Email alanı aktif", "", ""],
+            ["TC003", "Şifre Girişi", "Şifre alanına geçerli şifre girilmesi", "Yüksek", "Web", 1, "Şifre alanına tıkla", "id", "password-input", "Tıkla", "", "Şifre alanı aktif", "", ""],
+            ["TC004", "Giriş Butonu", "Giriş butonuna tıklanarak giriş yapılması", "Yüksek", "Web", 1, "Giriş butonuna tıkla", "id", "login-btn", "Tıkla", "", "Giriş yapıldı", "", ""],
+            ["TC005", "Hatalı Email", "Geçersiz email ile giriş denemesi", "Orta", "Web", 1, "Email alanına geçersiz email gir", "id", "email-input", "Yaz", "invalid@email", "Hata mesajı görüntülendi", "", ""],
+            ["TC006", "Hatalı Şifre", "Geçersiz şifre ile giriş denemesi", "Orta", "Web", 1, "Şifre alanına geçersiz şifre gir", "id", "password-input", "Yaz", "wrongpass", "Hata mesajı görüntülendi", "", ""],
         ]
         
         for row_idx, row_data in enumerate(example_data, 2):
@@ -115,30 +115,31 @@ class ExcelProcessor:
             
             # Veriyi test senaryolarına dönüştür
             test_scenarios = []
-            current_test = None
             
-            for _, row in df.iterrows():
+            for index, row in df.iterrows():
                 test_id = row.get('Test ID', '')
                 if pd.isna(test_id) or test_id == '':
                     continue
                 
-                # Yeni test senaryosu başlangıcı
-                if current_test is None or current_test['test_id'] != test_id:
-                    if current_test is not None:
-                        test_scenarios.append(current_test)
-                    
-                    current_test = {
-                        'test_id': str(test_id),
-                        'test_name': str(row.get('Test Adı', '')),
-                        'test_description': str(row.get('Test Açıklaması', '')),
-                        'priority': str(row.get('Öncelik', 'Orta')),
-                        'test_type': str(row.get('Test Türü', 'Web')),
-                        'steps': []
-                    }
+                # Her satırı ayrı bir test senaryosu olarak işle
+                # Eğer aynı Test ID varsa, adım numarasına göre benzersiz yap
+                unique_test_id = str(test_id)
+                if any(scenario['test_id'] == unique_test_id for scenario in test_scenarios):
+                    step_number = row.get('Adım No', 1)
+                    unique_test_id = f"{test_id}_step_{step_number}"
                 
-                # Test adımını ekle
+                test_scenario = {
+                    'test_id': unique_test_id,
+                    'test_name': str(row.get('Test Adı', f'Test {unique_test_id}')),
+                    'test_description': str(row.get('Test Açıklaması', '')),
+                    'priority': str(row.get('Öncelik', 'Orta')),
+                    'test_type': str(row.get('Test Türü', 'Web')),
+                    'steps': []
+                }
+                
+                # Tek adımlı test senaryosu oluştur
                 step = {
-                    'step_number': int(row.get('Adım No', 0)) if pd.notna(row.get('Adım No')) else 0,
+                    'step_number': int(row.get('Adım No', 1)) if pd.notna(row.get('Adım No')) else 1,
                     'description': str(row.get('Adım Açıklaması', '')),
                     'locator_type': str(row.get('Locator Türü', '')),
                     'locator_value': str(row.get('Locator Değeri', '')),
@@ -149,11 +150,8 @@ class ExcelProcessor:
                     'notes': str(row.get('Notlar', ''))
                 }
                 
-                current_test['steps'].append(step)
-            
-            # Son test senaryosunu ekle
-            if current_test is not None:
-                test_scenarios.append(current_test)
+                test_scenario['steps'].append(step)
+                test_scenarios.append(test_scenario)
             
             return test_scenarios
             

@@ -28,13 +28,14 @@ class WebsiteAnalyzer:
         self.clickable_elements = []
         self.analysis_results = {}
     
-    def analyze_html_source(self, html_source: str, url: str = "") -> Dict[str, Any]:
+    def analyze_html_source(self, html_source: str, url: str = "", analysis_type: str = "quick") -> Dict[str, Any]:
         """
         HTML kaynağını analiz eder ve tıklanabilir elementleri tespit eder
         
         Args:
             html_source: Analiz edilecek HTML kaynağı
             url: Web sitesi URL'si (opsiyonel)
+            analysis_type: Analiz türü ("quick", "detailed", "full")
             
         Returns:
             Analiz sonuçları sözlüğü
@@ -51,16 +52,22 @@ class WebsiteAnalyzer:
             # Navigasyon elementlerini tespit et
             navigation_elements = self._find_navigation_elements(soup)
             
-            # Script ve style analizi
-            script_analysis = self._analyze_scripts_and_styles(soup)
+            # Analiz türüne göre ek analizler
+            script_analysis = {}
+            page_analysis = {}
             
-            # Genel sayfa analizi
-            page_analysis = self._analyze_page_structure(soup)
+            if analysis_type in ["detailed", "full"]:
+                # Script ve style analizi
+                script_analysis = self._analyze_scripts_and_styles(soup)
+                
+                # Genel sayfa analizi
+                page_analysis = self._analyze_page_structure(soup)
             
             # Analiz sonuçlarını hazırla
             analysis_results = {
                 "url": url,
                 "analysis_date": datetime.now().isoformat(),
+                "analysis_type": analysis_type,
                 "total_clickable_elements": len(clickable_elements),
                 "total_form_elements": len(form_elements),
                 "total_navigation_elements": len(navigation_elements),
@@ -79,7 +86,8 @@ class WebsiteAnalyzer:
             return {
                 "error": f"HTML analizi sırasında hata oluştu: {str(e)}",
                 "url": url,
-                "analysis_date": datetime.now().isoformat()
+                "analysis_date": datetime.now().isoformat(),
+                "analysis_type": analysis_type
             }
     
     def analyze_dynamic_website(self, url: str, wait_time: int = 10, login_credentials: Dict[str, str] = None) -> Dict[str, Any]:

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Integration - TestMate Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .navbar-modern {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .example-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+
+        .template-preview {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border: 1px solid #e5e7eb;
+        }
+
+        .template-preview table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .template-preview th, .template-preview td {
+            border: 1px solid #e5e7eb;
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .template-preview th {
+            background: #f1f5f9;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-robot text-primary me-2"></i>
+                TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-arrow-left me-1"></i>Dashboard'a Dön
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Feature Header -->
+            <div class="feature-header">
+                <div class="feature-icon">
+                    <i class="fas fa-file-excel"></i>
+                </div>
+                <h1 class="feature-title">Excel Integration</h1>
+                <p class="feature-subtitle">Excel dosyalarından otomatik test projeleri oluşturun ve toplu test senaryolarını yönetin</p>
+                <a href="/excel" class="btn btn-primary-modern btn-modern btn-lg">
+                    <i class="fas fa-play me-2"></i>Hemen Başla
+                </a>
+            </div>
+
+            <!-- Overview -->
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle text-primary me-2"></i>Genel Bakış</h3>
+                <p class="lead">
+                    Excel Integration, test senaryolarınızı Excel dosyalarında organize ederek otomatik test projeleri 
+                    oluşturmanızı sağlar. Toplu test yönetimi, senaryo validasyonu ve proje oluşturma işlemlerini tek tıkla yapın.
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-upload fa-2x text-primary mb-2"></i>
+                            <h5>Kolay Yükleme</h5>
+                            <p>Excel dosyalarınızı sürükle-bırak ile yükleyin</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                            <h5>Otomatik Validasyon</h5>
+                            <p>Senaryoları otomatik olarak doğrulayın</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-rocket fa-2x text-warning mb-2"></i>
+                            <h5>Proje Oluşturma</h5>
+                            <p>Hazır test projelerini tek tıkla oluşturun</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="info-card">
+                <h3><i class="fas fa-cogs text-primary me-2"></i>Nasıl Çalışır?</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h5>Template İndirin</h5>
+                                <p>Hazır Excel template'ini indirin ve doldurun</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h5>Senaryoları Ekleyin</h5>
+                                <p>Test senaryolarınızı Excel'e ekleyin</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h5>Dosyayı Yükleyin</h5>
+                                <p>Excel dosyanızı sisteme yükleyin</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">4</div>
+                            <div>
+                                <h5>Proje Oluşturun</h5>
+                                <p>Otomatik test projesini indirin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Excel Template -->
+            <div class="info-card">
+                <h3><i class="fas fa-table text-primary me-2"></i>Excel Template Yapısı</h3>
+                <p>Test senaryolarınızı organize etmek için standart Excel template'i kullanın:</p>
+                
+                <div class="template-preview">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test ID</th>
+                                <th>Test Name</th>
+                                <th>Description</th>
+                                <th>Test Type</th>
+                                <th>Priority</th>
+                                <th>Steps</th>
+                                <th>Expected Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TC001</td>
+                                <td>User Login</td>
+                                <td>Valid user login test</td>
+                                <td>Web</td>
+                                <td>High</td>
+                                <td>1. Enter username<br>2. Enter password<br>3. Click login</td>
+                                <td>User should be logged in successfully</td>
+                            </tr>
+                            <tr>
+                                <td>TC002</td>
+                                <td>Product Search</td>
+                                <td>Search functionality test</td>
+                                <td>Web</td>
+                                <td>Medium</td>
+                                <td>1. Enter search term<br>2. Click search button</td>
+                                <td>Search results should be displayed</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-3">
+                    <a href="/api/download-template" class="btn btn-success btn-modern">
+                        <i class="fas fa-download me-2"></i>Template İndir
+                    </a>
+                </div>
+            </div>
+
+            <!-- Supported Formats -->
+            <div class="info-card">
+                <h3><i class="fas fa-file-alt text-primary me-2"></i>Desteklenen Formatlar</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-file-excel fa-3x text-success mb-3"></i>
+                            <h5>Excel (.xlsx)</h5>
+                            <p>Modern Excel formatı, en iyi uyumluluk</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-file-excel fa-3x text-warning mb-3"></i>
+                            <h5>Excel (.xls)</h5>
+                            <p>Eski Excel formatı desteği</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-file-csv fa-3x text-info mb-3"></i>
+                            <h5>CSV (.csv)</h5>
+                            <p>Basit tablo formatı</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples -->
+            <div class="info-card">
+                <h3><i class="fas fa-lightbulb text-primary me-2"></i>Örnekler</h3>
+                
+                <!-- E-commerce Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-shopping-cart text-primary me-2"></i>E-ticaret Test Senaryoları</h4>
+                    <p>E-ticaret sitesi için kapsamlı test senaryoları:</p>
+                    <div class="code-block">
+                        <pre><code class="language-python"># Oluşturulan test projesi yapısı
+ecommerce_tests/
+├── config.py              # Test konfigürasyonu
+├── test_user_login.py     # Kullanıcı girişi testleri
+├── test_product_search.py # Ürün arama testleri
+├── test_shopping_cart.py  # Sepet işlemleri testleri
+├── test_checkout.py       # Ödeme testleri
+└── run_tests.py          # Test çalıştırıcı
+
+# Örnek test kodu
+def test_user_login():
+    driver = webdriver.Chrome()
+    try:
+        driver.get("https://example.com/login")
+        
+        # Username girişi
+        username_field = driver.find_element(By.ID, "username")
+        username_field.send_keys("test@example.com")
+        
+        # Password girişi
+        password_field = driver.find_element(By.ID, "password")
+        password_field.send_keys("test123")
+        
+        # Login butonu
+        login_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+        login_button.click()
+        
+        # Başarı kontrolü
+        assert "Dashboard" in driver.title
+        
+    finally:
+        driver.quit()</code></pre>
+                    </div>
+                </div>
+
+                <!-- API Testing Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-plug text-success me-2"></i>API Test Senaryoları</h4>
+                    <p>REST API endpoint'leri için test senaryoları:</p>
+                    <div class="code-block">
+                        <pre><code class="language-python"># API test projesi
+api_tests/
+├── test_user_api.py       # Kullanıcı API testleri
+├── test_product_api.py    # Ürün API testleri
+├── test_order_api.py      # Sipariş API testleri
+└── conftest.py           # Test konfigürasyonu
+
+# Örnek API test kodu
+def test_create_user():
+    user_data = {
+        "name": "Test User",
+        "email": "test@example.com",
+        "password": "test123"
+    }
+    
+    response = requests.post(
+        "https://api.example.com/users",
+        json=user_data,
+        headers={"Content-Type": "application/json"}
+    )
+    
+    assert response.status_code == 201
+    assert "id" in response.json()</code></pre>
+                    </div>
+                </div>
+
+                <!-- Mobile Testing Example -->
+                <div class="example-card">
+                    <h4><i class="fas fa-mobile-alt text-warning me-2"></i>Mobil Uygulama Testleri</h4>
+                    <p>Mobil uygulama için test senaryoları:</p>
+                    <div class="code-block">
+                        <pre><code class="language-python"># Mobil test projesi
+mobile_tests/
+├── test_login_flow.py     # Giriş akışı testleri
+├── test_navigation.py     # Navigasyon testleri
+├── test_payment.py        # Ödeme testleri
+└── test_notifications.py  # Bildirim testleri
+
+# Örnek mobil test kodu
+def test_mobile_login():
+    caps = {
+        "platformName": "Android",
+        "deviceName": "Android Emulator",
+        "app": "/path/to/app.apk"
+    }
+    
+    driver = webdriver.Remote("http://localhost:4723/wd/hub", caps)
+    
+    try:
+        # Login işlemleri
+        username_field = driver.find_element(MobileBy.ID, "username")
+        username_field.send_keys("test@example.com")
+        
+        password_field = driver.find_element(MobileBy.ID, "password")
+        password_field.send_keys("test123")
+        
+        login_button = driver.find_element(MobileBy.ID, "login_button")
+        login_button.click()
+        
+        # Başarı kontrolü
+        dashboard = driver.find_element(MobileBy.ID, "dashboard")
+        assert dashboard.is_displayed()
+        
+    finally:
+        driver.quit()</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="info-card">
+                <h3><i class="fas fa-star text-warning me-2"></i>Özellikler</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-check-circle text-success me-2"></i>Excel İşleme</h5>
+                        <ul>
+                            <li><strong>Otomatik Validasyon:</strong> Senaryo formatını kontrol eder</li>
+                            <li><strong>Hata Tespiti:</strong> Eksik veya hatalı verileri bulur</li>
+                            <li><strong>Önizleme:</strong> Yüklenen senaryoları gösterir</li>
+                            <li><strong>Toplu İşleme:</strong> Çoklu senaryoları aynı anda işler</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-rocket text-primary me-2"></i>Proje Oluşturma</h5>
+                        <ul>
+                            <li><strong>Otomatik Kod:</strong> Test kodlarını otomatik oluşturur</li>
+                            <li><strong>Framework Desteği:</strong> Selenium, Appium, Requests</li>
+                            <li><strong>Konfigürasyon:</strong> Hazır test konfigürasyonu</li>
+                            <li><strong>ZIP İndirme:</strong> Projeyi paket halinde indirin</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="info-card">
+                <h3><i class="fas fa-chart-line text-success me-2"></i>Avantajlar</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                <strong>Zaman Tasarrufu:</strong> Test projesi oluşturma süresini %80 azaltın
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-users text-success me-2"></i>
+                                <strong>Takım Uyumu:</strong> Test senaryolarını Excel'de organize edin
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-shield-alt text-info me-2"></i>
+                                <strong>Hata Azaltma:</strong> Otomatik validasyon ile hataları önleyin
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-sync text-warning me-2"></i>
+                                <strong>Kolay Güncelleme:</strong> Excel'de değişiklik yapıp yeniden yükleyin
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-code text-danger me-2"></i>
+                                <strong>Kod Üretimi:</strong> Hazır test kodları ile hızlı geliştirme
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-download text-secondary me-2"></i>
+                                <strong>Hazır Proje:</strong> Çalışmaya hazır test projeleri
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center">
+                <h3>Hemen Excel Entegrasyonuna Başlayın</h3>
+                <p class="lead mb-4">Excel dosyalarınızdan otomatik test projeleri oluşturun</p>
+                <a href="/excel" class="btn btn-primary-modern btn-modern btn-lg me-3">
+                    <i class="fas fa-file-excel me-2"></i>Excel İşle
+                </a>
+                <a href="/" class="btn btn-outline-primary btn-modern btn-lg">
+                    <i class="fas fa-home me-2"></i>Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html> 

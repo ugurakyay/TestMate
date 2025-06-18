@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TestMate Studio - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        .stats-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        .bg-primary-gradient { background: linear-gradient(45deg, #007bff, #0056b3); }
+        .bg-success-gradient { background: linear-gradient(45deg, #28a745, #1e7e34); }
+        .bg-warning-gradient { background: linear-gradient(45deg, #ffc107, #e0a800); }
+        .bg-info-gradient { background: linear-gradient(45deg, #17a2b8, #138496); }
+        .bg-danger-gradient { background: linear-gradient(45deg, #dc3545, #c82333); }
+        .bg-purple-gradient { background: linear-gradient(45deg, #6f42c1, #5a2d91); }
+        
+        .recent-activity {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .activity-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s ease;
+        }
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            color: white;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin: 0 auto 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="p-4">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h6 class="text-white text-center mb-1">{{ user.full_name or user.email }}</h6>
+                        <p class="text-white-50 text-center mb-0 small">{{ user.license_type|title }} Plan</p>
+                    </div>
+                    
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                        <a class="nav-link" href="/generate">
+                            <i class="fas fa-magic me-2"></i> Test Oluştur
+                        </a>
+                        <a class="nav-link" href="/analyze">
+                            <i class="fas fa-search me-2"></i> Locator Analizi
+                        </a>
+                        <a class="nav-link" href="/excel">
+                            <i class="fas fa-file-excel me-2"></i> Excel İşleme
+                        </a>
+                        <a class="nav-link" href="/execute">
+                            <i class="fas fa-play me-2"></i> Test Çalıştır
+                        </a>
+                        <a class="nav-link" href="/website-analyzer">
+                            <i class="fas fa-globe me-2"></i> Website Analyzer
+                        </a>
+                        <a class="nav-link" href="/api-health-check">
+                            <i class="fas fa-heartbeat me-2"></i> API Health Check
+                        </a>
+                        <a class="nav-link" href="/projects">
+                            <i class="fas fa-folder me-2"></i> Projelerim
+                        </a>
+                        <a class="nav-link" href="/profile">
+                            <i class="fas fa-user me-2"></i> Profil
+                        </a>
+                        <a class="nav-link" href="/license">
+                            <i class="fas fa-key me-2"></i> Lisans
+                        </a>
+                        {% if user.role == 'admin' %}
+                        <a class="nav-link" href="/admin">
+                            <i class="fas fa-user-shield me-2"></i> Admin Paneli
+                        </a>
+                        {% endif %}
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i> Çıkış
+                        </a>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                    <div class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        <span id="current-time"></span>
+                    </div>
+                </div>
+                
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-primary-gradient me-3">
+                                    <i class="fas fa-folder"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0">{{ workspace_stats.projects or 0 }}</h4>
+                                    <p class="text-muted mb-0">Toplam Proje</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-success-gradient me-3">
+                                    <i class="fas fa-file-code"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0">{{ workspace_stats.file_count or 0 }}</h4>
+                                    <p class="text-muted mb-0">Test Dosyası</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-warning-gradient me-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0">{{ experience_stats.created_patterns or 0 }}</h4>
+                                    <p class="text-muted mb-0">Deneyim Paylaşımı</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="stats-card p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="stats-icon bg-info-gradient me-3">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div>
+                                    <h4 class="mb-0">{{ "%.1f"|format(experience_stats.success_rate or 0) }}%</h4>
+                                    <p class="text-muted mb-0">Başarı Oranı</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <!-- Quick Actions -->
+                    <div class="col-md-4 mb-4">
+                        <div class="quick-actions p-4">
+                            <h5 class="mb-3"><i class="fas fa-bolt me-2"></i>Hızlı İşlemler</h5>
+                            
+                            <a href="/generate" class="action-btn">
+                                <i class="fas fa-magic me-2"></i>
+                                Yeni Test Oluştur
+                            </a>
+                            
+                            <a href="/excel" class="action-btn">
+                                <i class="fas fa-file-excel me-2"></i>
+                                Excel'den Proje Oluştur
+                            </a>
+                            
+                            <a href="/analyze" class="action-btn">
+                                <i class="fas fa-search me-2"></i>
+                                Locator Analizi
+                            </a>
+                            
+                            <a href="/execute" class="action-btn">
+                                <i class="fas fa-play me-2"></i>
+                                Test Çalıştır
+                            </a>
+                            
+                            <a href="/website-analyzer" class="action-btn">
+                                <i class="fas fa-globe me-2"></i>
+                                Website Analyzer
+                            </a>
+                            
+                            <a href="/api-health-check" class="action-btn">
+                                <i class="fas fa-heartbeat me-2"></i>
+                                API Health Check
+                            </a>
+                            
+                            <a href="/projects" class="action-btn">
+                                <i class="fas fa-folder me-2"></i>
+                                Projelerimi Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="col-md-8 mb-4">
+                        <div class="recent-activity p-4">
+                            <h5 class="mb-3"><i class="fas fa-history me-2"></i>Son Aktiviteler</h5>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-success rounded-circle p-2 me-3">
+                                        <i class="fas fa-check text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Hoş geldiniz!</h6>
+                                        <p class="text-muted mb-0 small">TestMate Studio'ya başarıyla giriş yaptınız.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-info rounded-circle p-2 me-3">
+                                        <i class="fas fa-folder text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Workspace Hazır</h6>
+                                        <p class="text-muted mb-0 small">Kişisel çalışma alanınız oluşturuldu.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-warning rounded-circle p-2 me-3">
+                                        <i class="fas fa-key text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">{{ user.license_type|title }} Lisansı</h6>
+                                        <p class="text-muted mb-0 small">Lisansınız aktif durumda.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary rounded-circle p-2 me-3">
+                                        <i class="fas fa-rocket text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">Başlamaya Hazır</h6>
+                                        <p class="text-muted mb-0 small">İlk test projenizi oluşturmaya başlayın!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- License Information -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="stats-card p-4">
+                            <h5 class="mb-3"><i class="fas fa-key me-2"></i>Lisans Bilgileri</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Lisans Türü:</strong> {{ user.license_type|title }}</p>
+                                    <p><strong>Lisans Anahtarı:</strong> {{ user.license_key }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Bitiş Tarihi:</strong> {{ user.expiry_date }}</p>
+                                    <p><strong>Durum:</strong> <span class="badge bg-success">Aktif</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Current time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('tr-TR');
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Active navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+        
+        // Logout function
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed');
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+    </script>
+</body>
+</html> 

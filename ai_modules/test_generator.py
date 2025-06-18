@@ -3,13 +3,19 @@ import os
 from typing import List, Dict, Any
 import json
 from dotenv import load_dotenv
+from .template_generator import TemplateTestGenerator
+from datetime import datetime
 
 load_dotenv()
 
 class TestCaseGenerator:
-    """AI-powered test case generator using OpenAI"""
+    """Hibrit test case generator - Template-based + AI"""
     
     def __init__(self):
+        # Template-based generator
+        self.template_generator = TemplateTestGenerator()
+        
+        # AI configuration
         api_key = os.getenv("OPENAI_API_KEY")
         if api_key:
             self.client = openai.OpenAI(api_key=api_key)
@@ -17,100 +23,162 @@ class TestCaseGenerator:
         else:
             self.client = None
             self.ai_enabled = False
-            print("Warning: OPENAI_API_KEY not found. Using fallback test generation.")
+            print("Info: OPENAI_API_KEY not found. Using template-based generation only.")
         
         self.model = "gpt-4"
+        self.use_ai_threshold = 0.7  # AI kullanım eşiği
     
     async def generate_test_cases(
         self, 
         feature_description: str, 
         test_type: str, 
         framework: str = None,
-        additional_context: str = None
+        additional_context: str = None,
+        use_ai: bool = False  # Kullanıcı AI tercihi
     ) -> List[Dict[str, Any]]:
         """
-        Generate test cases using AI
+        Generate test cases using hybrid approach
         
         Args:
             feature_description: Description of the feature to test
             test_type: Type of test (web, mobile, api)
             framework: Testing framework to use
             additional_context: Additional context for test generation
+            use_ai: Force AI usage (for premium users)
             
         Returns:
             List of generated test cases
         """
         
-        if not self.ai_enabled:
-            return await self._generate_fallback_test(feature_description, test_type, framework)
+        # 1. Template-based generation (her zaman)
+        template_cases = await self.template_generator.generate_test_cases(
+            feature_description, test_type, framework, additional_context
+        )
         
-        # Build the prompt based on test type
-        prompt = self._build_prompt(feature_description, test_type, framework, additional_context)
+        # 2. AI enhancement (opsiyonel)
+        if use_ai and self.ai_enabled:
+            try:
+                ai_cases = await self._generate_ai_enhancement(
+                    feature_description, test_type, framework, additional_context
+                )
+                # AI sonuçlarını template sonuçlarıyla birleştir
+                return self._merge_test_cases(template_cases, ai_cases)
+            except Exception as e:
+                print(f"AI enhancement failed: {e}. Using template results only.")
+                return template_cases
+        
+        # 3. Karmaşıklık analizi ile AI önerisi
+        complexity_score = self._analyze_complexity(feature_description, additional_context)
+        if complexity_score > self.use_ai_threshold and self.ai_enabled:
+            print(f"High complexity detected ({complexity_score:.2f}). Consider using AI for better results.")
+        
+        return template_cases
+    
+    def _analyze_complexity(self, description: str, context: str = None) -> float:
+        """Feature karmaşıklığını analiz et"""
+        complexity_score = 0.0
+        
+        # Uzunluk faktörü
+        length_factor = min(len(description) / 100, 1.0)
+        complexity_score += length_factor * 0.3
+        
+        # Anahtar kelime analizi
+        complex_keywords = [
+            "api", "authentication", "authorization", "database", "cache",
+            "websocket", "real-time", "async", "concurrent", "distributed",
+            "microservice", "integration", "workflow", "pipeline", "queue"
+        ]
+        
+        description_lower = description.lower()
+        context_lower = (context or "").lower()
+        
+        for keyword in complex_keywords:
+            if keyword in description_lower or keyword in context_lower:
+                complexity_score += 0.1
+        
+        # Context uzunluğu
+        if context:
+            context_factor = min(len(context) / 200, 1.0)
+            complexity_score += context_factor * 0.2
+        
+        return min(complexity_score, 1.0)
+    
+    async def _generate_ai_enhancement(
+        self, 
+        feature_description: str, 
+        test_type: str, 
+        framework: str, 
+        additional_context: str
+    ) -> List[Dict[str, Any]]:
+        """AI ile test case'leri geliştir"""
+        
+        # Build the prompt for AI enhancement
+        prompt = self._build_enhancement_prompt(feature_description, test_type, framework, additional_context)
         
         try:
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are an expert test automation engineer. Generate comprehensive test cases in Python."},
+                    {"role": "system", "content": "You are an expert test automation engineer. Enhance existing test cases with advanced scenarios and edge cases."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.7,
-                max_tokens=2000
+                max_tokens=1500
             )
             
             # Parse the response
-            test_cases = await self._parse_response(response.choices[0].message.content, test_type, feature_description, framework)
-            return test_cases
+            enhanced_cases = await self._parse_ai_response(response.choices[0].message.content)
+            return enhanced_cases
             
         except Exception as e:
-            print(f"Error generating test cases: {e}")
-            # Return a fallback test case
-            return await self._generate_fallback_test(feature_description, test_type, framework)
+            print(f"Error in AI enhancement: {e}")
+            return []
     
-    def _build_prompt(self, feature_description: str, test_type: str, framework: str, additional_context: str) -> str:
-        """Build the prompt for test generation"""
+    def _build_enhancement_prompt(self, feature_description: str, test_type: str, framework: str, additional_context: str) -> str:
+        """AI enhancement için prompt oluştur"""
         
-        base_prompt = f"""
-        Generate comprehensive test cases for the following feature:
+        return f"""
+        Enhance the following test scenario with advanced test cases:
         
-        Feature Description: {feature_description}
+        Feature: {feature_description}
         Test Type: {test_type}
-        Framework: {framework or 'Default'}
-        Additional Context: {additional_context or 'None'}
+        Framework: {framework}
+        Context: {additional_context or 'None'}
         
-        Please generate test cases that include:
-        1. Happy path scenarios
-        2. Edge cases
-        3. Error scenarios
-        4. Performance considerations (if applicable)
+        Please generate additional test cases that include:
+        1. Performance test scenarios
+        2. Security test cases
+        3. Accessibility testing
+        4. Cross-browser compatibility (for web)
+        5. Data-driven test scenarios
+        6. Negative test cases
+        7. Boundary value analysis
+        8. Error handling scenarios
         
-        Format the response as a JSON array with the following structure:
+        Focus on:
+        - Real-world scenarios
+        - Industry best practices
+        - Comprehensive coverage
+        - Maintainable test code
+        
+        Format as JSON array:
         {{
-            "test_cases": [
+            "enhanced_cases": [
                 {{
                     "name": "Test case name",
-                    "description": "Test case description",
+                    "description": "Detailed description",
+                    "category": "performance|security|accessibility|compatibility|data-driven|negative|boundary|error",
                     "steps": ["Step 1", "Step 2", ...],
                     "expected_result": "Expected outcome",
-                    "priority": "High/Medium/Low",
+                    "priority": "High|Medium|Low",
                     "code": "Python test code"
                 }}
             ]
         }}
         """
-        
-        # Add framework-specific instructions
-        if test_type == "web":
-            base_prompt += "\nUse Selenium WebDriver for web testing."
-        elif test_type == "mobile":
-            base_prompt += "\nUse Appium for mobile testing."
-        elif test_type == "api":
-            base_prompt += "\nUse requests library for API testing."
-        
-        return base_prompt
     
-    async def _parse_response(self, response: str, test_type: str, feature_description: str = "", framework: str = "") -> List[Dict[str, Any]]:
-        """Parse the AI response into structured test cases"""
+    async def _parse_ai_response(self, response: str) -> List[Dict[str, Any]]:
+        """AI yanıtını parse et"""
         try:
             # Try to extract JSON from the response
             if "```json" in response:
@@ -125,94 +193,77 @@ class TestCaseGenerator:
                 json_str = response.strip()
             
             data = json.loads(json_str)
-            return data.get("test_cases", [])
+            return data.get("enhanced_cases", [])
             
         except (json.JSONDecodeError, KeyError) as e:
-            print(f"Error parsing response: {e}")
-            return await self._generate_fallback_test(feature_description, test_type, framework)
+            print(f"Error parsing AI response: {e}")
+            return []
     
-    async def _generate_fallback_test(self, feature_description: str, test_type: str, framework: str) -> List[Dict[str, Any]]:
-        """Generate a fallback test case when AI generation fails"""
+    def _merge_test_cases(self, template_cases: List[Dict], ai_cases: List[Dict]) -> List[Dict]:
+        """Template ve AI test case'lerini birleştir"""
+        merged_cases = template_cases.copy()
         
-        if test_type == "web":
-            return [{
-                "name": f"Basic {feature_description} Test",
-                "description": f"Basic test for {feature_description}",
-                "steps": [
-                    "Navigate to the application",
-                    f"Perform {feature_description} action",
-                    "Verify the result"
-                ],
-                "expected_result": "Feature should work as expected",
-                "priority": "High",
-                "code": f"""
-import pytest
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-
-def test_{feature_description.lower().replace(' ', '_')}():
-    driver = webdriver.Chrome()
-    try:
-        driver.get("https://example.com")
-        # Add test implementation here
-        assert True
-    finally:
-        driver.quit()
-                """
-            }]
+        # AI case'lerini ekle
+        for ai_case in ai_cases:
+            # Duplicate kontrolü
+            if not self._is_duplicate(ai_case, template_cases):
+                merged_cases.append(ai_case)
         
-        elif test_type == "api":
-            return [{
-                "name": f"API {feature_description} Test",
-                "description": f"API test for {feature_description}",
-                "steps": [
-                    "Send request to endpoint",
-                    "Verify response status",
-                    "Validate response data"
-                ],
-                "expected_result": "API should return correct response",
-                "priority": "High",
-                "code": f"""
-import requests
-
-def test_{feature_description.lower().replace(' ', '_')}():
-    response = requests.get("https://api.example.com/endpoint")
-    assert response.status_code == 200
-    # Add more assertions here
-                """
-            }]
-        
-        else:  # mobile
-            return [{
-                "name": f"Mobile {feature_description} Test",
-                "description": f"Mobile test for {feature_description}",
-                "steps": [
-                    "Launch the app",
-                    f"Perform {feature_description} action",
-                    "Verify the result"
-                ],
-                "expected_result": "Feature should work on mobile",
-                "priority": "High",
-                "code": f"""
-from appium import webdriver
-
-def test_{feature_description.lower().replace(' ', '_')}():
-    # Add Appium test implementation here
-    assert True
-                """
-            }]
+        return merged_cases
     
-    async def generate_test_suite(self, features: List[str], test_type: str) -> Dict[str, Any]:
-        """Generate a complete test suite for multiple features"""
+    def _is_duplicate(self, ai_case: Dict, template_cases: List[Dict]) -> bool:
+        """Duplicate test case kontrolü"""
+        ai_name = ai_case.get("name", "").lower()
+        
+        for template_case in template_cases:
+            template_name = template_case.get("name", "").lower()
+            if ai_name == template_name:
+                return True
+        
+        return False
+    
+    async def generate_test_suite(self, features: List[str], test_type: str, use_ai: bool = False) -> Dict[str, Any]:
+        """Complete test suite oluştur"""
         
         test_suite = {
             "name": f"{test_type.title()} Test Suite",
             "description": f"Comprehensive test suite for {test_type} testing",
-            "test_cases": []
+            "test_cases": [],
+            "metadata": {
+                "generated_at": datetime.now().isoformat(),
+                "total_cases": 0,
+                "ai_enhanced": use_ai,
+                "complexity_score": 0.0
+            }
         }
         
-        for feature in features:
-            test_cases = await self.generate_test_cases(feature, test_type)
-            test_suite["test_cases"].extend(test_cases)
+        total_complexity = 0.0
         
-        return test_suite 
+        for feature in features:
+            test_cases = await self.generate_test_cases(feature, test_type, use_ai=use_ai)
+            test_suite["test_cases"].extend(test_cases)
+            
+            # Complexity hesapla
+            complexity = self._analyze_complexity(feature)
+            total_complexity += complexity
+        
+        # Metadata güncelle
+        test_suite["metadata"]["total_cases"] = len(test_suite["test_cases"])
+        test_suite["metadata"]["complexity_score"] = total_complexity / len(features) if features else 0.0
+        
+        return test_suite
+    
+    # Legacy methods for backward compatibility
+    async def _generate_fallback_test(self, feature_description: str, test_type: str, framework: str) -> List[Dict[str, Any]]:
+        """Fallback test generation (template-based)"""
+        return await self.template_generator.generate_test_cases(
+            feature_description, test_type, framework
+        )
+    
+    def _build_prompt(self, feature_description: str, test_type: str, framework: str, additional_context: str) -> str:
+        """Legacy prompt builder"""
+        return self._build_enhancement_prompt(feature_description, test_type, framework, additional_context)
+    
+    async def _parse_response(self, response: str, test_type: str, feature_description: str = "", framework: str = "") -> List[Dict[str, Any]]:
+        """Legacy response parser"""
+        return await self._parse_ai_response(response) 

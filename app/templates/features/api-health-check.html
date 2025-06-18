@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Health Check - TestMate Studio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #ef4444;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+
+        .navbar-modern {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+        }
+
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard">
+                <i class="fas fa-robot text-primary me-2"></i>
+                TestMate Studio
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-arrow-left me-1"></i>Dashboard'a Dön
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Feature Header -->
+            <div class="feature-header">
+                <div class="feature-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h1 class="feature-title">API Health Check</h1>
+                <p class="feature-subtitle">API endpoint'lerinizin sağlık durumunu kontrol edin ve detaylı raporlar alın</p>
+                <a href="/api-health-check" class="btn btn-primary-modern btn-modern btn-lg">
+                    <i class="fas fa-play me-2"></i>Hemen Başla
+                </a>
+            </div>
+
+            <!-- Overview -->
+            <div class="info-card">
+                <h3><i class="fas fa-info-circle text-primary me-2"></i>Genel Bakış</h3>
+                <p class="lead">
+                    API Health Check, REST API endpoint'lerinizin sağlık durumunu otomatik olarak kontrol eder. 
+                    JSON formatında endpoint listesi alarak her birinin erişilebilirliğini ve yanıt sürelerini test eder.
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-bolt fa-2x text-primary mb-2"></i>
+                            <h5>Hızlı Kontrol</h5>
+                            <p>API'lerinizi saniyeler içinde kontrol edin</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                            <h5>Detaylı Rapor</h5>
+                            <p>Kapsamlı sağlık raporları alın</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <i class="fas fa-file-pdf fa-2x text-warning mb-2"></i>
+                            <h5>PDF Export</h5>
+                            <p>Raporları PDF formatında indirin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="info-card">
+                <h3><i class="fas fa-cogs text-primary me-2"></i>Nasıl Çalışır?</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h5>JSON Girin</h5>
+                                <p>API endpoint'lerinizi JSON formatında girin</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h5>Kontrol Başlatın</h5>
+                                <p>Health check işlemini başlatın</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h5>Otomatik Test</h5>
+                                <p>Her endpoint otomatik olarak test edilir</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">4</div>
+                            <div>
+                                <h5>Rapor Alın</h5>
+                                <p>Detaylı sağlık raporunu görüntüleyin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supported Formats -->
+            <div class="info-card">
+                <h3><i class="fas fa-file-code text-primary me-2"></i>Desteklenen Formatlar</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-list fa-3x text-primary mb-3"></i>
+                            <h5>Basit Liste</h5>
+                            <p>Endpoint'lerin basit listesi</p>
+                            <code>["url1", "url2", "url3"]</code>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-object-group fa-3x text-success mb-3"></i>
+                            <h5>Obje Listesi</h5>
+                            <p>Endpoint'lerin detaylı tanımı</p>
+                            <code>[{"name": "API1", "url": "url1"}]</code>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center p-3">
+                            <i class="fas fa-download fa-3x text-warning mb-3"></i>
+                            <h5>Postman Collection</h5>
+                            <p>Postman collection export'u</p>
+                            <code>{"info": {}, "item": []}</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="info-card">
+                <h3><i class="fas fa-star text-warning me-2"></i>Özellikler</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-heartbeat text-success me-2"></i>Health Check</h5>
+                        <ul>
+                            <li><strong>HTTP Status Kontrolü:</strong> 200, 404, 500 gibi durum kodlarını kontrol eder</li>
+                            <li><strong>Yanıt Süresi:</strong> Her endpoint'in yanıt süresini ölçer</li>
+                            <li><strong>Erişilebilirlik:</strong> Endpoint'lerin erişilebilir olup olmadığını test eder</li>
+                            <li><strong>Paralel Test:</strong> Birden fazla endpoint'i aynı anda test eder</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5><i class="fas fa-chart-bar text-primary me-2"></i>Raporlama</h5>
+                        <ul>
+                            <li><strong>JSON Rapor:</strong> Detaylı JSON formatında rapor</li>
+                            <li><strong>PDF Rapor:</strong> Profesyonel PDF raporu</li>
+                            <li><strong>Başarı Oranı:</strong> Genel başarı oranı hesaplama</li>
+                            <li><strong>Hata Detayları:</strong> Başarısız endpoint'lerin detaylı analizi</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits -->
+            <div class="info-card">
+                <h3><i class="fas fa-chart-line text-success me-2"></i>Avantajlar</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-rocket text-primary me-2"></i>
+                                <strong>Hızlı Kontrol:</strong> API'lerinizi saniyeler içinde kontrol edin
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-eye text-success me-2"></i>
+                                <strong>Görsel Rapor:</strong> Sağlık durumunu görsel olarak takip edin
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-bug text-info me-2"></i>
+                                <strong>Hızlı Tespit:</strong> Sorunlu endpoint'leri hızlıca tespit edin
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <i class="fas fa-users text-warning me-2"></i>
+                                <strong>Takım Paylaşımı:</strong> Raporları takımla paylaşın
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-history text-danger me-2"></i>
+                                <strong>Geçmiş Takibi:</strong> API sağlık geçmişini saklayın
+                            </li>
+                            <li class="mb-3">
+                                <i class="fas fa-sync text-secondary me-2"></i>
+                                <strong>Otomatik Tekrar:</strong> Düzenli kontroller için otomatik tekrar
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center">
+                <h3>Hemen API Health Check'e Başlayın</h3>
+                <p class="lead mb-4">API endpoint'lerinizin sağlık durumunu kontrol edin</p>
+                <a href="/api-health-check" class="btn btn-primary-modern btn-modern btn-lg me-3">
+                    <i class="fas fa-heartbeat me-2"></i>API Health Check
+                </a>
+                <a href="/" class="btn btn-outline-primary btn-modern btn-lg">
+                    <i class="fas fa-home me-2"></i>Ana Sayfa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

@@ -4,12 +4,33 @@ TestMate Studio, yapay zeka destekli test otomasyonu platformudur. Kodlama bilgi
 
 ## 🚀 Özellikler
 
-- **AI Test Generation**: Yapay zeka ile otomatik test senaryoları oluşturma
+- **Hibrit AI Test Generation**: Template-based + AI enhancement yaklaşımı
 - **Smart Locator Analysis**: Akıllı locator analizi ile element bulma
 - **Excel Integration**: Excel dosyalarından otomatik proje oluşturma
 - **Multi-Framework Support**: Selenium, Appium, Requests desteği
 - **License Management**: Lisans yönetimi ve kullanıcı kontrolü
 - **Admin Panel**: Kapsamlı admin paneli ile kullanıcı yönetimi
+
+## 🤖 Hibrit AI Yaklaşımı
+
+TestMate Studio, maliyet etkinliği ve kalite arasında mükemmel dengeyi sağlayan hibrit AI yaklaşımını kullanır:
+
+### 📋 Template-Based Generation (Ana Yöntem)
+- **Maliyet**: $0 (ücretsiz)
+- **Hız**: Anında
+- **Kalite**: Profesyonel seviye
+- **Kapsam**: Temel ve orta seviye test senaryoları
+
+### 🧠 AI Enhancement (Premium)
+- **Maliyet**: Düşük (sadece karmaşık senaryolar için)
+- **Hız**: 5-10 saniye
+- **Kalite**: Gelişmiş seviye
+- **Kapsam**: Performance, security, accessibility testleri
+
+### 🎯 Akıllı Seçim
+- Karmaşıklık analizi ile otomatik öneri
+- Kullanıcı tercihi ile manuel seçim
+- Premium kullanıcılar için AI önceliği
 
 ## 📋 Gereksinimler
 

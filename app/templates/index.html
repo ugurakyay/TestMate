@@ -3,58 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TestMate Studio - Ana Sayfa</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>TestMate Studio - AI-Powered Test Automation Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --card-bg: #fff;
+            --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
         }
-        .hero-section {
-            background: rgba(255, 255, 255, 0.1);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%);
+            min-height: 100vh;
+            color: var(--dark-color);
+        }
+        .navbar-modern {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: relative;
+            z-index: 1000;
+        }
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+        .navbar-nav .nav-link {
+            color: var(--dark-color) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .navbar-nav .nav-link.active, .navbar-nav .nav-link:focus, .navbar-nav .nav-link:hover {
+            color: var(--primary-color) !important;
+            transform: translateY(-1px);
+        }
+        .breadcrumb-modern {
+            background: transparent;
+            padding: 1rem 0;
+            margin-bottom: 0;
+        }
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .breadcrumb-item.active {
+            color: #64748b;
+        }
+        .page-header {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 3rem 2rem;
-            margin: 2rem 0;
+            margin: 2rem 0 3rem 0;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        .page-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem auto;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 8px 32px rgba(79,70,229,0.2);
+        }
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-subtitle {
+            font-size: 1.25rem;
+            color: #475569;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+        .btn-primary-modern:hover {
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+            transform: translateY(-2px);
+        }
+        .btn-outline-primary {
+            border: 2px solid var(--primary-color) !important;
+            color: var(--primary-color) !important;
+            background: rgba(255,255,255,0.9) !important;
+            backdrop-filter: blur(10px);
+        }
+        .btn-outline-primary:hover {
+            background: var(--primary-color) !important;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+        }
+        .stats-section {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem 1rem;
+            margin: 2rem 0 2.5rem 0;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .stat-item {
+            text-align: center;
+            color: var(--primary-color);
+        }
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #64748b;
+            font-weight: 500;
         }
         .feature-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 2rem;
-            margin: 1rem 0;
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         .feature-card:hover {
-            transform: translateY(-5px);
+            box-shadow: 0 8px 32px rgba(79,70,229,0.15);
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(79,70,229,0.2);
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+            color: var(--dark-color);
+        }
+        .feature-description {
+            color: #475569;
+            margin-bottom: 1.2rem;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+        .feature-card .d-flex {
+            margin-top: auto;
+        }
+        .feature-card .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        @media (max-width: 991px) {
+            .feature-card {
+                margin-bottom: 2rem;
+            }
+        }
+        @media (max-width: 767px) {
+            .page-title {
+                font-size: 2rem;
+            }
+            .page-subtitle {
+                font-size: 1.1rem;
+            }
+            .feature-card {
+                padding: 1.2rem 0.7rem 1.7rem 0.7rem;
+            }
+            .page-header {
+                padding: 2rem 1rem;
+            }
+        }
+        .footer {
+            background: rgba(241,245,249,0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(229,231,235,0.5);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        .footer h5, .footer p {
+            color: #334155;
+        }
+        .dropdown-menu {
+            z-index: 1001 !important;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            border-radius: 12px;
+            padding: 0.5rem 0;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-modern">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-robot me-2"></i>TestMate Studio
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-robot text-primary me-2"></i>
+                TestMate Studio
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav me-auto" id="navFeatures" style="display: none;">
                     <li class="nav-item">
                         <a class="nav-link" href="/generate">Test Oluştur</a>
                     </li>
@@ -62,19 +269,51 @@
                         <a class="nav-link" href="/analyze">Locator Analizi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/website-analyzer">Website Analizi</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/excel">Excel İşleme</a>
+                        <a class="nav-link" href="/excel">Excel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/execute">Test Çalıştır</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/license">Lisans</a>
+                        <a class="nav-link" href="/website-analyzer">Website Analizi</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin</a>
+                        <a class="nav-link" href="/api-health-check">API Health Check</a>
+                    </li>
+                </ul>
+                
+                <!-- Authentication Section -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- User Info (if logged in) -->
+                    <li class="nav-item dropdown" id="userDropdown" style="display: none;">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-2"></i>
+                            <span id="userName">Kullanıcı</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="/profile">
+                                <i class="fas fa-user me-2"></i>Profil
+                            </a></li>
+                            <li><a class="dropdown-item" href="/dashboard">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                            </a></li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Login/Register Buttons (if not logged in) -->
+                    <li class="nav-item" id="authButtons">
+                        <div class="d-flex gap-2">
+                            <a href="/login" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-sign-in-alt me-1"></i>Giriş
+                            </a>
+                            <a href="/register" class="btn btn-primary btn-sm">
+                                <i class="fas fa-user-plus me-1"></i>Kayıt Ol
+                            </a>
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -82,96 +321,374 @@
     </nav>
 
     <div class="container">
-        <div class="hero-section text-center text-white">
-            <h1 class="display-4 mb-4">TestMate Studio</h1>
-            <p class="lead mb-4">Yapay Zeka Destekli Test Otomasyonu Platformu</p>
-            <div class="row">
-                <div class="col-md-3">
-                    <a href="/generate" class="btn btn-primary btn-lg mb-3">
-                        <i class="fas fa-magic me-2"></i>Test Oluştur
-                    </a>
+        <!-- Hero Section -->
+        <div class="page-header">
+            <div class="page-icon">
+                <i class="fas fa-robot"></i>
+            </div>
+            <h1 class="page-title">TestMate Studio</h1>
+            <p class="page-subtitle">Yapay zeka destekli test otomasyonu platformu ile test süreçlerinizi otomatikleştirin</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/generate" class="btn btn-primary-modern btn-modern">
+                    <i class="fas fa-magic"></i>AI Test Generation
+                </a>
+                <a href="/excel" class="btn btn-outline-primary btn-modern">
+                    <i class="fas fa-file-excel"></i>Excel Integration
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="row g-4">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Oluşturulan Test</div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <a href="/analyze" class="btn btn-primary btn-lg mb-3">
-                        <i class="fas fa-search me-2"></i>Locator Analizi
-                    </a>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Aktif Proje</div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <a href="/website-analyzer" class="btn btn-primary btn-lg mb-3">
-                        <i class="fas fa-globe me-2"></i>Website Analizi
-                    </a>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Başarı Oranı</div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <a href="/excel" class="btn btn-primary btn-lg mb-3">
-                        <i class="fas fa-file-excel me-2"></i>Excel İşleme
-                    </a>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Destek</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-3">
-                <div class="feature-card text-center">
-                    <i class="fas fa-robot fa-3x text-primary mb-3"></i>
-                    <h4>AI Test Generation</h4>
-                    <p>Yapay zeka ile otomatik test senaryoları oluşturun</p>
+        <!-- Features Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3 class="feature-title">AI Test Generation</h3>
+                    <p class="feature-description">
+                        Yapay zeka ile doğal dil açıklamalarından otomatik test senaryoları oluşturun. 
+                        Kodlama bilgisi gerektirmez.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/generate" class="btn btn-primary-modern btn-modern btn-sm" id="generateBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/ai-test-generation" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="generateLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="feature-card text-center">
-                    <i class="fas fa-search fa-3x text-primary mb-3"></i>
-                    <h4>Smart Locator Analysis</h4>
-                    <p>Akıllı locator analizi ile element bulma</p>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2); color: white;">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Locator Analysis</h3>
+                    <p class="feature-description">
+                        HTML içeriğinden akıllı locator analizi yapın. En uygun element seçicilerini 
+                        otomatik olarak bulun.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/analyze" class="btn btn-primary-modern btn-modern btn-sm" id="analyzeBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/locator-analysis" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="analyzeLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="feature-card text-center">
-                    <i class="fas fa-globe fa-3x text-primary mb-3"></i>
-                    <h4>Website Analysis</h4>
-                    <p>Web sitesi analizi ve tıklanabilir element tespiti</p>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <h3 class="feature-title">Excel Integration</h3>
+                    <p class="feature-description">
+                        Excel dosyalarından otomatik test projeleri oluşturun. 
+                        Toplu test senaryolarını kolayca yönetin.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/excel" class="btn btn-primary-modern btn-modern btn-sm" id="excelBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/excel-integration" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="excelLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="feature-card text-center">
-                    <i class="fas fa-file-excel fa-3x text-primary mb-3"></i>
-                    <h4>Excel Integration</h4>
-                    <p>Excel dosyalarından otomatik proje oluşturma</p>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <h3 class="feature-title">Test Execution</h3>
+                    <p class="feature-description">
+                        Oluşturulan testleri anında çalıştırın ve sonuçları görüntüleyin. 
+                        Gerçek zamanlı test raporları alın.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/execute" class="btn btn-primary-modern btn-modern btn-sm" id="executeBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/test-execution" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="executeLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3 class="feature-title">Website Analyzer</h3>
+                    <p class="feature-description">
+                        Web sitelerini analiz edin ve otomatik test senaryoları oluşturun. 
+                        Dinamik içerik tespiti yapın.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/website-analyzer" class="btn btn-primary-modern btn-modern btn-sm" id="websiteBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/website-analyzer" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="websiteLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3 class="feature-title">API Health Check</h3>
+                    <p class="feature-description">
+                        API endpoint'lerinin sağlık durumunu kontrol edin. 
+                        Otomatik raporlama ve PDF export.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a href="/api-health-check" class="btn btn-primary-modern btn-modern btn-sm" id="apiBtn" style="display: none;">
+                            <i class="fas fa-play me-1"></i>Başla
+                        </a>
+                        <a href="/features/api-health-check" class="btn btn-outline-primary btn-modern btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>Detaylar
+                        </a>
+                        <a href="/login" class="btn btn-primary-modern btn-modern btn-sm" id="apiLoginBtn">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Gerekli
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="feature-card">
-                    <h5><i class="fas fa-cogs me-2"></i>Özellikler</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="fas fa-check text-success me-2"></i>AI destekli test oluşturma</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Akıllı locator analizi</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Website analizi ve element tespiti</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Excel entegrasyonu</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Otomatik proje oluşturma</li>
-                        <li><i class="fas fa-check text-success me-2"></i>Lisans yönetimi</li>
-                    </ul>
+        <!-- Login Required Section -->
+        <div class="row g-4 mb-4" id="loginRequiredSection" style="display: none;">
+            <div class="col-12">
+                <div class="feature-card text-center">
+                    <div class="feature-icon mx-auto" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3 class="feature-title">Özelliklere Erişim İçin Giriş Yapın</h3>
+                    <p class="feature-description">
+                        TestMate Studio'nun tüm özelliklerini kullanabilmek için lütfen giriş yapın veya hesap oluşturun.
+                        Ücretsiz deneme sürümü ile hemen başlayabilirsiniz.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="/login" class="btn btn-primary-modern btn-modern">
+                            <i class="fas fa-sign-in-alt me-2"></i>Giriş Yap
+                        </a>
+                        <a href="/register" class="btn btn-outline-primary btn-modern">
+                            <i class="fas fa-user-plus me-2"></i>Hesap Oluştur
+                        </a>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="feature-card">
-                    <h5><i class="fas fa-rocket me-2"></i>Hızlı Başlangıç</h5>
-                    <ol>
-                        <li>Test senaryonuzu tanımlayın</li>
-                        <li>AI ile test kodları oluşturun</li>
-                        <li>Locator'ları analiz edin</li>
-                        <li>Projeyi indirin ve çalıştırın</li>
-                    </ol>
-                </div>
-            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="hero-section text-center mt-5">
+            <h2 class="mb-3">Hemen Başlayın</h2>
+            <p class="hero-subtitle">Test otomasyonunu kolaylaştırın ve verimliliğinizi artırın</p>
+            <a href="/license" class="btn btn-primary-modern btn-modern btn-lg">
+                <i class="fas fa-rocket me-2"></i>Ücretsiz Deneme Başlat
+            </a>
         </div>
     </div>
 
-    <footer class="text-center text-white py-4 mt-5">
-        <p>TestMate Studio v1.0.0 - Yapay Zeka Destekli Test Otomasyonu</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">TestMate Studio</h5>
+                    <p class="mb-0">Yapay zeka destekli test otomasyonu platformu</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">© 2024 TestMate Studio. Tüm hakları saklıdır.</p>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Authentication Management
+        class AuthManager {
+            constructor() {
+                this.checkAuthStatus();
+                this.setupEventListeners();
+            }
+            
+            async checkAuthStatus() {
+                try {
+                    const response = await fetch('/api/auth/me', {
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.showUserInfo(data.user);
+                        this.showFeatures();
+                    } else {
+                        this.showLoginButtons();
+                        this.showLoginRequired();
+                    }
+                } catch (error) {
+                    console.log('Auth check failed:', error);
+                    this.showLoginButtons();
+                    this.showLoginRequired();
+                }
+            }
+            
+            showUserInfo(user) {
+                // Hide login buttons
+                document.getElementById('authButtons').style.display = 'none';
+                
+                // Show user dropdown
+                const userDropdown = document.getElementById('userDropdown');
+                const userName = document.getElementById('userName');
+                
+                userName.textContent = user.full_name || user.email;
+                userDropdown.style.display = 'block';
+                
+                // Add admin badge if admin
+                if (user.role === 'admin') {
+                    userName.innerHTML += ' <span class="badge bg-danger ms-1">Admin</span>';
+                }
+            }
+            
+            showLoginButtons() {
+                document.getElementById('authButtons').style.display = 'block';
+                document.getElementById('userDropdown').style.display = 'none';
+            }
+            
+            showFeatures() {
+                // Show all feature buttons
+                document.getElementById('generateBtn').style.display = 'inline-flex';
+                document.getElementById('analyzeBtn').style.display = 'inline-flex';
+                document.getElementById('excelBtn').style.display = 'inline-flex';
+                document.getElementById('executeBtn').style.display = 'inline-flex';
+                document.getElementById('websiteBtn').style.display = 'inline-flex';
+                document.getElementById('apiBtn').style.display = 'inline-flex';
+                
+                // Hide login required buttons
+                document.getElementById('generateLoginBtn').style.display = 'none';
+                document.getElementById('analyzeLoginBtn').style.display = 'none';
+                document.getElementById('excelLoginBtn').style.display = 'none';
+                document.getElementById('executeLoginBtn').style.display = 'none';
+                document.getElementById('websiteLoginBtn').style.display = 'none';
+                document.getElementById('apiLoginBtn').style.display = 'none';
+                
+                document.getElementById('loginRequiredSection').style.display = 'none';
+                document.getElementById('navFeatures').style.display = 'flex';
+            }
+            
+            showLoginRequired() {
+                // Hide all feature buttons
+                const btns = [
+                    'generateBtn', 'analyzeBtn', 'excelBtn', 'executeBtn', 'websiteBtn', 'apiBtn'
+                ];
+                btns.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+                // Show login required buttons
+                const loginBtns = [
+                    'generateLoginBtn', 'analyzeLoginBtn', 'excelLoginBtn', 'executeLoginBtn', 'websiteLoginBtn', 'apiLoginBtn'
+                ];
+                loginBtns.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'inline-flex';
+                });
+                const featuresSection = document.getElementById('featuresSection');
+                if (featuresSection) featuresSection.style.display = 'none';
+                const loginRequiredSection = document.getElementById('loginRequiredSection');
+                if (loginRequiredSection) loginRequiredSection.style.display = 'block';
+                const navFeatures = document.getElementById('navFeatures');
+                if (navFeatures) navFeatures.style.display = 'none';
+            }
+            
+            setupEventListeners() {
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await this.logout();
+                });
+            }
+            
+            async logout() {
+                try {
+                    const response = await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        credentials: 'include'
+                    });
+                    
+                    if (response.ok) {
+                        // Redirect to home page
+                        window.location.href = '/';
+                    } else {
+                        console.error('Logout failed');
+                    }
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            }
+        }
+        
+        // Initialize authentication manager
+        document.addEventListener('DOMContentLoaded', function() {
+            new AuthManager();
+        });
+    </script>
 </body>
 </html> 

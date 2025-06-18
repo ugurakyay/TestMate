@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.log
+*.tmp
+*.temp
+cookies.txt
+test_*.html
+~$*.docx
+TestMate_Studio_Dokuman_*.docx
+
+# Screenshots (optional)
+screenshots/
+
+# Generated tests
+generated_tests/
+
+# Reports
+reports/
+
+# Uploads
+uploads/
+
+# Exports
+exports/
+
+# LinkedIn files (optional)
+LinkedIn_*.md
+MAKALE_*.md
+TestMate_Studio_Makale_*.html
+
+# Temporary scripts
+capture_screenshots.py
+convert_to_*.py
+create_word_document.py
